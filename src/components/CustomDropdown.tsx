@@ -32,6 +32,15 @@ export const CustomDropdown: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLLIElement>(null);
+
+  /* The list scrolls once there are more profiles than fit, and the one you
+     care about is usually the selected one. Without this it opened with the
+     selection clipped at the bottom edge, and arrowing past the visible rows
+     went nowhere. */
+  useEffect(() => {
+    if (isOpen) activeRef.current?.scrollIntoView({ block: "nearest" });
+  }, [isOpen, activeIndex]);
 
   const selected = options.find((option) => valueOf(option) === selectedValue);
   const selectedLabel = selected ? labelOf(selected) : selectedValue;
@@ -106,6 +115,7 @@ export const CustomDropdown: React.FC<Props> = ({
             return (
               <li
                 key={value}
+                ref={index === activeIndex ? activeRef : undefined}
                 role="option"
                 aria-selected={isSelected}
                 className={`${isSelected ? 'selected' : ''} ${index === activeIndex ? 'active' : ''}`}

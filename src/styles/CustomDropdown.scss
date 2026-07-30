@@ -55,20 +55,32 @@
     border-radius: 10px;
     box-shadow: 0 8px 24px var(--shadow-color);
     z-index: 1001; // above the modal overlay
-    max-height: 260px;
+    /* Fits about five rows before scrolling; beyond that the active option is
+       scrolled into view instead. */
+    max-height: 22rem;
     overflow-y: auto;
+    /* Rounded outer corners with full-bleed rows inside. */
+    overflow-x: hidden;
     list-style: none;
-    padding: 0.25rem;
+    padding: 0;
     margin: 0;
 
     li {
       display: flex;
       align-items: center;
+      /* Profile names can be long — "Cedro - Casa do Tempero" has to wrap
+         rather than be truncated, so the row grows instead of clipping. */
       min-height: $tap-target;
-      padding: 0 0.75rem;
-      border-radius: 6px;
+      padding: 0.625rem 0.875rem;
+      line-height: 1.35;
       color: var(--ink);
       cursor: pointer;
+
+      /* Without a divider, two wrapped names ran together and there was no way
+         to tell where one option ended. */
+      & + li {
+        border-top: 1px solid var(--line);
+      }
 
       /* One highlight, driven by keyboard or pointer alike, so arrow keys and
          the mouse never disagree about what is about to be chosen. */
@@ -79,10 +91,6 @@
       &.selected {
         color: var(--accent);
         font-weight: 600;
-
-        &.active {
-          background-color: var(--surface);
-        }
       }
     }
   }
