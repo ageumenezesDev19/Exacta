@@ -22,9 +22,12 @@
     color: var(--font-color);
   }
 
-  /* The dropdown trigger is a button too, and this blanket rule was painting it
-     solid accent the moment it opened. */
-  button:not(.dropdown-selected) {
+  /* This blanket rule outranks the component rules further down (an element
+     selector beats none at equal class count), so any button that isn't a
+     plain text action has to opt out by name here. It was painting the
+     dropdown trigger solid accent when open, and squashing the icon buttons:
+     1rem of side padding inside a 36px box leaves the icon 4px to draw in. */
+  button:not(.dropdown-selected):not(.icon-action-btn) {
     background: var(--primary-color);
     color: #fff;
     border: none;

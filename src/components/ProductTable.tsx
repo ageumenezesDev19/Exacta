@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { PackageOpen } from "lucide-react";
 import { Product } from "../utils/inventory";
 import { EmptyState } from "./EmptyState";
+import { sampleProducts } from "../data/sampleInventory";
+import { useInventoryContext } from "../context/InventoryContext";
 import "../styles/ProductTable.scss";
 
 interface Props {
@@ -13,6 +15,7 @@ const ITEMS_PER_PAGE = 20;
 
 const ProductTable: React.FC<Props> = ({ products }) => {
   const { t } = useTranslation();
+  const { setProducts } = useInventoryContext();
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
@@ -32,6 +35,18 @@ const ProductTable: React.FC<Props> = ({ products }) => {
           icon={PackageOpen}
           title={t('inventory.emptyTitle', 'Nenhum produto ainda')}
           body={t('inventory.emptyState', 'Nenhum produto ainda. Importe sua lista para começar a buscar por valor.')}
+          action={
+            // Importing a file is a real barrier for anyone trying the app for
+            // the first time — this gets them to a working search in one click,
+            // on invented stock rather than their own.
+            <button
+              type="button"
+              className="empty-state-button"
+              onClick={() => setProducts(sampleProducts)}
+            >
+              {t('inventory.loadSample', 'Carregar estoque de exemplo')}
+            </button>
+          }
         />
       </div>
     );

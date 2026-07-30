@@ -43,7 +43,8 @@
   "inventory": {
     "importHtml": "Import product list (.html/.xls)",
     "importPrompt": "Exacta needs your product list first. Export `products.html` or `products.xls` from your system and import it here.",
-    "emptyState": "Import your product list and every item lands here, ready to be searched by amount.",
+    "emptyState": "Import your product list and every item lands here, ready to be searched by amount. Or try it on a sample shop first.",
+    "loadSample": "Load sample stock",
     "stockTitle": "Products in Stock",
     "table": {
       "code": "Code",

@@ -54,3 +54,26 @@
 .empty-state-action {
   margin-top: 0.75rem;
 }
+
+/* Scoped to the empty state so the app-wide button rule doesn't paint it
+   solid accent — this is an offer, not the primary action of the screen. */
+.empty-state-block .empty-state-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  border: 1px solid var(--accent);
+  border-radius: $border-radius;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+}
