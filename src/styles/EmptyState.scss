@@ -1,0 +1,56 @@
+@use "./variables" as *;
+
+/* The dashed block is the container while it waits, so the solid panel around
+   it would be a second border saying the same thing. */
+.product-table.is-empty {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.empty-state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 3rem 1.5rem;
+  /* Dashed edge reads as "a container waiting to be filled" rather than a
+     finished panel that happens to be blank. */
+  border: 1px dashed var(--line);
+  border-radius: $border-radius;
+  background: transparent;
+}
+
+.empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 0.25rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.empty-state-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.empty-state-body {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.empty-state-action {
+  margin-top: 0.75rem;
+}

@@ -43,7 +43,7 @@
   "inventory": {
     "importHtml": "Importar lista de produtos (.html/.xls)",
     "importPrompt": "O Exacta precisa da sua lista de produtos primeiro. Exporte do seu sistema o arquivo `produtos.html` ou `produtos.xls` e importe aqui.",
-    "emptyState": "Nenhum produto ainda. Importe sua lista para começar a buscar por valor.",
+    "emptyState": "Importe sua lista e cada produto aparece aqui, pronto para ser buscado por valor.",
     "stockTitle": "Produtos em Estoque",
     "table": {
       "code": "Código",
@@ -69,7 +69,8 @@
       "productDeleted": "Produto removido temporariamente.",
       "productPermanentlyDeleted": "Produto {{name}} removido do estoque em definitivo.",
       "productRestored": "Produto restaurado."
-    }
+    },
+    "emptyTitle": "Nenhum produto ainda"
   },
   "withdrawn": {
     "importCsv": "Importar histórico de retiradas",

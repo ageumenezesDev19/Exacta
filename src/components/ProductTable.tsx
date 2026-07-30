@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { PackageOpen } from "lucide-react";
 import { Product } from "../utils/inventory";
+import { EmptyState } from "./EmptyState";
 import "../styles/ProductTable.scss";
 
 interface Props {
@@ -25,8 +27,12 @@ const ProductTable: React.FC<Props> = ({ products }) => {
 
   if (products.length === 0) {
     return (
-      <div className="product-table animated-fadein">
-        <p className="empty-state">{t('inventory.emptyState', 'Nenhum produto em estoque.')}</p>
+      <div className="product-table is-empty animated-fadein">
+        <EmptyState
+          icon={PackageOpen}
+          title={t('inventory.emptyTitle', 'Nenhum produto ainda')}
+          body={t('inventory.emptyState', 'Nenhum produto ainda. Importe sua lista para começar a buscar por valor.')}
+        />
       </div>
     );
   }

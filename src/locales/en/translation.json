@@ -43,7 +43,7 @@
   "inventory": {
     "importHtml": "Import product list (.html/.xls)",
     "importPrompt": "Exacta needs your product list first. Export `products.html` or `products.xls` from your system and import it here.",
-    "emptyState": "No products yet. Import your list to start searching by amount.",
+    "emptyState": "Import your product list and every item lands here, ready to be searched by amount.",
     "stockTitle": "Products in Stock",
     "table": {
       "code": "Code",
@@ -69,7 +69,8 @@
       "productDeleted": "Product temporarily removed.",
       "productPermanentlyDeleted": "Product {{name}} permanently removed from stock.",
       "productRestored": "Product restored."
-    }
+    },
+    "emptyTitle": "No products yet"
   },
   "withdrawn": {
     "importCsv": "Import withdrawal history",
