@@ -1,3 +1,4 @@
+@use "./variables" as *;
 @use "./ProductTable.scss";
 @use "./WithdrawnTable.scss";
 @use "./SearchBar.scss";
@@ -11,8 +12,43 @@ html, body {
   padding: 0;
 }
 
+/* The app runs on a counter, often on a tablet, with someone waiting. One base
+   rule lifts every control to the 44px touch floor instead of patching
+   thirteen stylesheets — 11 of 14 controls were under it before. */
+button,
+select,
+input:not([type="checkbox"]):not([type="radio"]),
+.manage-btn,
+.theme-toggle {
+  min-height: $tap-target;
+  font-family: $font-family;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Prices and quantities are compared down a column, so they need tabular
+   figures: 1 and 7 take the same width, and 0 never reads as O. */
+.price,
+.value,
+td:has(+ td),
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .app-container {
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: $font-family;
   background: var(--background-color);
   color: var(--font-color);
   min-height: 100vh;
@@ -64,38 +100,43 @@ html, body {
       flex: 1;
       background: var(--input-bg);
       color: var(--font-color);
-      border: 1.5px solid var(--primary-color);
-      border-radius: 4px;
+      /* Neutral at rest and accent on focus. It used to be an accent border by
+         default and the danger colour on focus, which read as an error before
+         anyone had typed anything. */
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
       padding: 0.5rem 1rem;
       font-size: 1rem;
       outline: none;
-      transition: border 0.2s;
+      transition: border-color 0.2s;
       &:focus {
-        border-color: var(--secondary-color);
+        border-color: var(--accent);
       }
     }
     select {
       min-width: 150px;
       background: var(--input-bg);
       color: var(--font-color);
-      border: 1.5px solid var(--primary-color);
-      border-radius: 4px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
       padding: 0.5rem 2.2rem 0.5rem 1rem;
       font-size: 1rem;
       outline: none;
       appearance: none;
       transition: border 0.2s;
       position: relative;
-      background-image: url("data:image/svg+xml;utf8,<svg fill='%232d2d6e' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      /* A data URI cannot read a custom property, so the arrow colour is
+         written out per theme — these were still the old navy and indigo. */
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%235f6672' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
       [data-theme='dark'] & {
-        background-image: url("data:image/svg+xml;utf8,<svg fill='%234a4ae2' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%239aa1ad' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
       }
       background-repeat: no-repeat;
       background-position: right 0.7rem center;
       background-size: 1.2rem 1.2rem;
       cursor: pointer;
       &:focus {
-        border-color: var(--secondary-color);
+        border-color: var(--accent);
       }
       &:hover {
         background-color: var(--background-color);

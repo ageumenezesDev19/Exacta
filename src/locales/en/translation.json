@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "DesPensa",
+    "title": "Exacta",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "inventory": "Inventory",
@@ -36,14 +36,14 @@
     "btnWithdrawCombination": "Withdraw Combination",
     "searchAnother": "Search another",
     "copyName": "Copy product name",
-    "notFound": "No products or combinations found.",
+    "notFound": "No combination adds up to that amount. Try a nearby value, or check whether items are on the blacklist.",
     "invalidPrice": "Invalid price for combination search.",
     "cancelled": "Search cancelled."
   },
   "inventory": {
-    "importHtml": "Import products (.html/.xls)",
-    "importPrompt": "Please import `products.html` or `products.xls` to start.",
-    "emptyState": "No products in stock.",
+    "importHtml": "Import product list (.html/.xls)",
+    "importPrompt": "Exacta needs your product list first. Export `products.html` or `products.xls` from your system and import it here.",
+    "emptyState": "No products yet. Import your list to start searching by amount.",
     "stockTitle": "Products in Stock",
     "table": {
       "code": "Code",
@@ -72,8 +72,8 @@
     }
   },
   "withdrawn": {
-    "importCsv": "Import withdrawn.csv",
-    "emptyDay": "No products withdrawn on this day.",
+    "importCsv": "Import withdrawal history",
+    "emptyDay": "Nothing was withdrawn on this day.",
     "dayTotal": "Daily Total",
     "history": "Withdrawal History",
     "total": "Total",
@@ -91,7 +91,7 @@
     "flag": "Flag product"
   },
   "blacklist": {
-    "importTxt": "Import blacklist.txt",
+    "importTxt": "Import blacklist",
     "title": "Blacklist",
     "addTerm": "Add term",
     "add": "Add",
@@ -169,7 +169,7 @@
     "ignoredCount": "Ignored",
     "lastWithdrawnAt": "Last withdrawn",
     "lastIgnoredAt": "Last ignored",
-    "empty": "The ranking will appear after using Withdraw Combination or Recalculate.",
+    "empty": "The ranking builds itself as you withdraw combinations — it shows which products you use most.",
     "filters": {
       "positive": "Most useful",
       "negative": "Least useful",

@@ -1,37 +1,72 @@
+/* Exacta design tokens — see docs/DESIGN.md.
+   The tool is used standing at a counter with a customer waiting: numbers lead,
+   contrast is high, and the "exact match" green is reserved for that one state. */
+
 :root {
-  --primary-color: #2d2d6e;
-  --primary-color-hover: #4444aa;
-  --secondary-color: #f44336;
-  --secondary-color-hover: #c62828;
-  --background-color: #f7f7fa;
-  --font-color: #333;
-  --border-color: #ddd;
-  --white: #fff;
-  --success-color: #4CAF50;
-  --danger-color: #f44336;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --header-bg: #2d2d6e;
-  --header-text: #fff;
-  --card-bg: #fff;
-  --input-bg: #fff;
+  --surface: #f5f6f8;
+  --panel: #ffffff;
+  --ink: #14161a;
+  --ink-soft: #5f6672;
+  --line: #dfe2e7;
+
+  --accent: #4640c4;
+  --accent-hover: #3a35a8;
+  --accent-contrast: #ffffff;
+
+  /* Reserved for a combination that lands on the target exactly. */
+  --match: #10855a;
+  --miss: #b3372a;
+
+  --shadow-color: rgba(20, 22, 26, 0.08);
+
+  /* Names the existing components already reference, mapped onto the new
+     system so the reskin does not require touching every stylesheet. */
+  --primary-color: var(--accent);
+  --primary-color-hover: var(--accent-hover);
+  --secondary-color: var(--miss);
+  --secondary-color-hover: #94301f;
+  --background-color: var(--surface);
+  --font-color: var(--ink);
+  --border-color: var(--line);
+  --white: var(--panel);
+  --success-color: var(--match);
+  --danger-color: var(--miss);
+  --header-bg: var(--panel);
+  --header-text: var(--ink);
+  --card-bg: var(--panel);
+  --input-bg: var(--panel);
 }
 
-[data-theme='dark'] {
-  --primary-color: #4a4ae2;
-  --primary-color-hover: #6666ff;
-  --secondary-color: #ff5252;
-  --secondary-color-hover: #ff7070;
-  --background-color: #121212;
-  --font-color: #e0e0e0;
-  --border-color: #333;
-  --white: #1e1e1e;
-  --success-color: #66bb6a;
-  --danger-color: #ef5350;
-  --shadow-color: rgba(0, 0, 0, 0.5);
-  --header-bg: #1a1a1a;
-  --header-text: #e0e0e0;
-  --card-bg: #1e1e1e;
-  --input-bg: #2a2a2a;
+[data-theme="dark"] {
+  --surface: #0e1013;
+  --panel: #171a1f;
+  --ink: #e8eaed;
+  --ink-soft: #9aa1ad;
+  --line: #282c33;
+
+  --accent: #7b75e8;
+  --accent-hover: #8f8aef;
+  --accent-contrast: #0e1013;
+
+  --match: #2bb37e;
+  --miss: #e06a5b;
+
+  --shadow-color: rgba(0, 0, 0, 0.45);
+
+  --primary-color: var(--accent);
+  --primary-color-hover: var(--accent-hover);
+  --secondary-color: var(--miss);
+  --secondary-color-hover: #ea8377;
+  --background-color: var(--surface);
+  --font-color: var(--ink);
+  --border-color: var(--line);
+  --white: var(--panel);
+  --success-color: var(--match);
+  --danger-color: var(--miss);
+  --header-bg: var(--panel);
+  --header-text: var(--ink);
+  --card-bg: var(--panel);
+  --input-bg: #1f232a;
 }
 
 $primary-color: var(--primary-color);
@@ -43,9 +78,15 @@ $white: var(--white);
 $success-color: var(--success-color);
 $danger-color: var(--danger-color);
 
-$font-family: 'Inter', Arial, sans-serif;
+/* Manrope carries the interface; JetBrains Mono carries every number, because
+   tabular figures keep price columns aligned and 0 never reads as O. */
+$font-family: "Manrope", system-ui, sans-serif;
+$font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-$box-shadow: 0 2px 4px var(--shadow-color);
-$border-radius: 8px;
+$box-shadow: 0 1px 2px var(--shadow-color);
+$border-radius: 10px;
+
+/* Touch floor: the app runs on a counter tablet. */
+$tap-target: 44px;
 
 $breakpoint-mobile: 768px;

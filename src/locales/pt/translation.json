@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "DesPensa",
+    "title": "Exacta",
     "darkMode": "Modo Escuro",
     "lightMode": "Modo Claro",
     "inventory": "Estoque",
@@ -36,14 +36,14 @@
     "btnWithdrawCombination": "Retirar Combinação",
     "searchAnother": "Buscar outra",
     "copyName": "Copiar nome do produto",
-    "notFound": "Nenhum produto ou combinação encontrada.",
+    "notFound": "Nenhuma combinação fecha esse valor. Tente um valor próximo, ou confira se algum item está na lista de exclusão.",
     "invalidPrice": "Preço inválido para busca de combinação.",
     "cancelled": "Busca cancelada."
   },
   "inventory": {
-    "importHtml": "Importar produtos (.html/.xls)",
-    "importPrompt": "Por favor, importe o arquivo `produtos.html` ou `produtos.xls` para começar.",
-    "emptyState": "Nenhum produto em estoque.",
+    "importHtml": "Importar lista de produtos (.html/.xls)",
+    "importPrompt": "O Exacta precisa da sua lista de produtos primeiro. Exporte do seu sistema o arquivo `produtos.html` ou `produtos.xls` e importe aqui.",
+    "emptyState": "Nenhum produto ainda. Importe sua lista para começar a buscar por valor.",
     "stockTitle": "Produtos em Estoque",
     "table": {
       "code": "Código",
@@ -72,8 +72,8 @@
     }
   },
   "withdrawn": {
-    "importCsv": "Importar retirados.csv",
-    "emptyDay": "Nenhum produto retirado neste dia.",
+    "importCsv": "Importar histórico de retiradas",
+    "emptyDay": "Nada foi retirado neste dia.",
     "dayTotal": "Total do Dia",
     "history": "Histórico de Retiradas",
     "total": "Total",
@@ -91,7 +91,7 @@
     "flag": "Sinalizar produto"
   },
   "blacklist": {
-    "importTxt": "Importar lista_negra.txt",
+    "importTxt": "Importar lista de exclusão",
     "title": "Lista Negra",
     "addTerm": "Adicionar termo",
     "add": "Adicionar",
@@ -168,7 +168,7 @@
     "ignoredCount": "Ignorado",
     "lastWithdrawnAt": "Última retirada",
     "lastIgnoredAt": "Último ignore",
-    "empty": "O ranking aparecerá após usar Retirar combinação ou Recalcular.",
+    "empty": "O ranking se monta conforme você retira combinações — ele mostra quais produtos você mais usa.",
     "filters": {
       "positive": "Mais funcionais",
       "negative": "Menos funcionais",

@@ -1,4 +1,5 @@
 import React from "react";
+import { Moon, Sun, Trash2 } from "lucide-react";
 import "./styles/main.scss";
 import "./styles/ProfileManager.scss";
 import { ProfileManager } from "./components/ProfileManager";
@@ -77,9 +78,10 @@ const App: React.FC = () => {
       <button
         className="clear-fab"
         title={t('app.clearAllData')}
+        aria-label={t('app.clearAllData')}
         onClick={() => setShowClearModal(true)}
       >
-        🧹
+        <Trash2 size={18} aria-hidden="true" />
       </button>
       <header>
         <div className="header-top">
@@ -89,12 +91,12 @@ const App: React.FC = () => {
             <button className="theme-toggle" onClick={toggleTheme}>
               {theme === 'light' ? (
                 <>
-                  <span className="icon">🌙</span>
+                  <Moon size={16} className="icon" aria-hidden="true" />
                   <span className="text">{t('app.darkMode')}</span>
                 </>
               ) : (
                 <>
-                  <span className="icon">☀️</span>
+                  <Sun size={16} className="icon" aria-hidden="true" />
                   <span className="text">{t('app.lightMode')}</span>
                 </>
               )}

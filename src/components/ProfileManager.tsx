@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProfiles } from '../hooks/useProfiles';
 import { ProfileManagementModal } from './ProfileManagementModal';
@@ -28,7 +29,7 @@ export const ProfileManager: React.FC = () => {
           </div>
           
           <button className="manage-btn" onClick={() => setIsModalOpen(true)}>
-            <span className="icon">⚙️</span>
+            <Settings size={16} className="icon" aria-hidden="true" />
             {t('profile.btnManage', 'Gerenciar')}
           </button>
         </div>

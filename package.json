@@ -1,5 +1,5 @@
 {
-  "name": "despensa",
+  "name": "exacta",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -19,6 +19,7 @@
     "i18next": "^25.8.13",
     "js-combinations": "^1.0.1",
     "js-combinatorics": "^2.1.2",
+    "lucide-react": "^1.27.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-i18next": "^16.5.4"
