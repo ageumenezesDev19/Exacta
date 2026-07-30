@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from "../utils/inventory";
 import AnimatedButton from "./AnimatedButton";
 import { MatchPanel } from "./MatchPanel";
+import { CustomDropdown } from "./CustomDropdown";
 import "../styles/SearchBar.scss";
 import { ProductWithQuantity } from "../context/InventoryContext";
 import { SearchMode } from "../hooks/useSearch";
@@ -145,18 +146,22 @@ const SearchBar: React.FC = () => {
           onKeyPress={handleKeyPress}
           disabled={!!searching}
         />
-        <select
-          value={searchMode}
-          onChange={e => {
-            setSearchMode(e.target.value as SearchMode);
+        {/* The native select opened an operating-system menu that had nothing
+            to do with the app. This is the same dropdown the profile picker
+            uses, so both menus look and behave alike. */}
+        <CustomDropdown
+          label={t('search.modeLabel', 'Tipo de busca')}
+          selectedValue={searchMode}
+          onSelect={(value) => {
+            setSearchMode(value as SearchMode);
             setResult(null);
           }}
-          disabled={!!searching}
-        >
-          <option value="combination">{t('search.byCombination', 'Buscar Combinação')}</option>
-          <option value="product_price">{t('search.byPrice', 'Buscar Unidade por Preço')}</option>
-          <option value="product_name">{t('search.byName', 'Buscar Produto por Nome')}</option>
-        </select>
+          options={[
+            { value: 'combination', label: t('search.byCombination', 'Buscar Combinação') },
+            { value: 'product_price', label: t('search.byPrice', 'Buscar Unidade por Preço') },
+            { value: 'product_name', label: t('search.byName', 'Buscar Produto por Nome') },
+          ]}
+        />
         <button onClick={() => handleSearch(false)} disabled={products.length === 0 || !price || !!searching}>
           {t('blacklist.add', 'Buscar')}
         </button>

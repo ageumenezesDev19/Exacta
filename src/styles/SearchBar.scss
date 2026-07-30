@@ -22,7 +22,9 @@
     color: var(--font-color);
   }
 
-  button {
+  /* The dropdown trigger is a button too, and this blanket rule was painting it
+     solid accent the moment it opened. */
+  button:not(.dropdown-selected) {
     background: var(--primary-color);
     color: #fff;
     border: none;
