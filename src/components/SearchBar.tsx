@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import { Product } from "../utils/inventory";
 import AnimatedButton from "./AnimatedButton";
+import { MatchPanel } from "./MatchPanel";
 import "../styles/SearchBar.scss";
 import { ProductWithQuantity } from "../context/InventoryContext";
 import { SearchMode } from "../hooks/useSearch";
@@ -231,13 +232,19 @@ const SearchBar: React.FC = () => {
       )}
       {!searching && result && result.status === "ok" && searchMode === "combination" && result.combination && (
         <div className="search-result-card">
-          <div className="result-header">
-            <h4>{t('search.combinationFound', 'Combinação Encontrada')}</h4>
-            <span className="total-price">
-              {t('withdrawn.total', 'Total')}: <strong>R$ {result.combination.reduce((acc: number, p: any) => acc + (p.salePrice ?? 0) * p.usedQuantity, 0).toFixed(2)}</strong>
-            </span>
-          </div>
-          
+          {/* Only the items still in the combination count: the total used to
+              include ones the operator had already removed, so it disagreed
+              with what would actually be withdrawn. */}
+          <MatchPanel
+            target={Number(price) || 0}
+            sum={result.combination
+              .filter((p: any) => !deletedCombinationItems.has(p.code))
+              .reduce((acc: number, p: any) => acc + (p.salePrice ?? 0) * p.usedQuantity, 0)}
+            itemCount={
+              result.combination.filter((p: any) => !deletedCombinationItems.has(p.code)).length
+            }
+          />
+
           <ul className="result-list">
             {result.combination
               .slice((combPage - 1) * COMB_ITEMS_PER_PAGE, combPage * COMB_ITEMS_PER_PAGE)

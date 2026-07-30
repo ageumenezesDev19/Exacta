@@ -175,5 +175,14 @@
       "negative": "Least useful",
       "all": "All"
     }
+  },
+  "match": {
+    "target": "Target",
+    "sum": "Sum",
+    "exact": "exact match",
+    "over": "over by R$ {{amount}}",
+    "under": "short by R$ {{amount}}",
+    "itemCount": "{{count}} items",
+    "itemCount_one": "{{count}} item"
   }
 }

@@ -174,5 +174,14 @@
       "negative": "Menos funcionais",
       "all": "Todos"
     }
+  },
+  "match": {
+    "target": "Alvo",
+    "sum": "Soma",
+    "exact": "fecha exato",
+    "over": "passa R$ {{amount}}",
+    "under": "falta R$ {{amount}}",
+    "itemCount": "{{count}} itens",
+    "itemCount_one": "{{count}} item"
   }
 }
