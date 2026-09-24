@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import "../styles/WithdrawnTable.scss";
 import { Product } from "../utils/inventory";
+import { money } from "../utils/money";
 
 export interface Withdrawn {
   id: string;
@@ -153,7 +154,7 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
       </div>
 
       <div className="day-summary">
-        <h3>{t('withdrawn.dayTotal', 'Total do Dia')}: R$ {totalForSelectedDay.toFixed(2)}</h3>
+        <h3>{t('withdrawn.dayTotal', 'Total do Dia')}: R$ {money(totalForSelectedDay)}</h3>
       </div>
 
       {productsForSelectedDay.length > 0 ? (
@@ -175,7 +176,7 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
                   <td>{p.product?.code || '---'}</td>
                   <td>{p.product?.description || '---'}</td>
                   <td>{p.withdrawnQuantity}</td>
-                  <td>R$ {Number(p.product?.salePrice ?? 0).toFixed(2)}</td>
+                  <td>R$ {money(Number(p.product?.salePrice ?? 0))}</td>
                   <td>{p.date ? new Date(p.date.split(" ")[0] + 'T00:00:00').toLocaleDateString(currentLang) : '---'}</td>
                   <td>
                     <button className="delete-btn" onClick={() => handleDelete(p.id)}>{t('withdrawn.revert', 'Reverter')}</button>
@@ -206,7 +207,7 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
           return (
             <div key={month} className="month-section">
               <h3 onClick={() => toggleMonth(month)} className="month-header">
-                <span>{month.charAt(0).toUpperCase() + month.slice(1)} - {t('withdrawn.total', 'Total')}: R$ {monthlyTotal.toFixed(2)}</span>
+                <span>{month.charAt(0).toUpperCase() + month.slice(1)} - {t('withdrawn.total', 'Total')}: R$ {money(monthlyTotal)}</span>
                 <span className={`toggle-icon ${expandedMonths.has(month) ? 'expanded' : ''}`}></span>
               </h3>
               {expandedMonths.has(month) && (
@@ -214,14 +215,14 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
                   {Object.keys(withdrawnByMonth[month]).sort((a,b) => new Date(b + 'T00:00:00').getTime() - new Date(a + 'T00:00:00').getTime()).map(dateString => (
                     <div key={dateString} className="day-details">
                       <h4 onClick={() => toggleDay(month, dateString)} className="day-header">
-                        {formatDate(new Date(dateString + 'T00:00:00'))} - {t('withdrawn.total', 'Total')}: R$ {withdrawnByMonth[month][dateString].reduce((acc, p) => acc + (Number(p.product?.salePrice ?? 0) * Number(p.withdrawnQuantity)), 0).toFixed(2)}
+                        {formatDate(new Date(dateString + 'T00:00:00'))} - {t('withdrawn.total', 'Total')}: R$ {money(withdrawnByMonth[month][dateString].reduce((acc, p) => acc + (Number(p.product?.salePrice ?? 0) * Number(p.withdrawnQuantity)), 0))}
                         <span className={`toggle-icon ${expandedDays[month]?.has(dateString) ? 'expanded' : ''}`}></span>
                       </h4>
                       {expandedDays[month]?.has(dateString) && (
                         <ul>
                           {withdrawnByMonth[month][dateString].map((p) => (
                             <li key={p.id}>
-                              {p.product?.description || '---'} ({p.withdrawnQuantity}x) - R$ {Number(p.product?.salePrice ?? 0).toFixed(2)}
+                              {p.product?.description || '---'} ({p.withdrawnQuantity}x) - R$ {money(Number(p.product?.salePrice ?? 0))}
                               <button className="delete-btn-small" onClick={() => handleDelete(p.id)}>
                                 <span>
                                   X

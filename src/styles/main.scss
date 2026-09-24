@@ -24,6 +24,50 @@ input:not([type="checkbox"]):not([type="radio"]),
   font-family: $font-family;
 }
 
+/* One control for picking one option of a few: language, ranking filter.
+   The chosen button carries aria-pressed, so the state is announced as well
+   as drawn, and each button keeps its own border to stay on the 44px floor. */
+.segmented {
+  display: inline-flex;
+
+  button {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-width: 44px;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    & + button { border-left: none; }
+    &:first-child { border-radius: 8px 0 0 8px; }
+    &:last-child { border-radius: 0 8px 8px 0; }
+
+    &:hover:not([aria-pressed="true"]) {
+      color: var(--ink);
+      background: color-mix(in srgb, var(--ink) 7%, transparent);
+    }
+
+    &[aria-pressed="true"] {
+      color: var(--ink);
+      background: color-mix(in srgb, var(--ink) 11%, transparent);
+      cursor: default;
+    }
+  }
+}
+
+.ranking-filters {
+  margin-bottom: 1rem;
+
+  /* Three labels don't fit one line on a phone; equal columns keep the wrap even. */
+  @media (max-width: 600px) {
+    display: flex;
+    button { flex: 1; padding: 0 8px; line-height: 1.2; }
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -67,6 +111,7 @@ td:has(+ td),
         border: none;
         border-radius: 4px;
         padding: 0.5rem 1rem;
+        font-size: 0.95rem;
         font-weight: bold;
         cursor: pointer;
         transition: background 0.2s;
@@ -107,6 +152,9 @@ td:has(+ td),
       border-radius: 8px;
       padding: 0.5rem 1rem;
       font-size: 1rem;
+      /* The 44px tap floor is a min-height, which content-box applies to the
+         text alone: padding and border were stacking on top to make 62px. */
+      box-sizing: border-box;
       outline: none;
       transition: border-color 0.2s;
       &:focus {

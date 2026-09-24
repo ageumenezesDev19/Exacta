@@ -9,9 +9,11 @@
   justify-content: space-between;
   gap: 0.75rem 1.5rem;
   padding: 1.25rem 1.5rem;
-  border-radius: $border-radius $border-radius 0 0;
+  /* A card of its own, spaced like the items: as an open-bottomed cap it sat
+     glued to the first item, which is a separate bordered card. */
+  margin-bottom: 0.75rem;
+  border-radius: $border-radius;
   border: 1px solid var(--line);
-  border-bottom: none;
   background: var(--panel);
 
   /* The verdict colours the whole block's top edge, so it reads from across

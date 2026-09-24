@@ -9,6 +9,7 @@ import { ProductWithQuantity } from "../context/InventoryContext";
 import { SearchMode } from "../hooks/useSearch";
 import { useInventoryContext } from "../context/InventoryContext";
 import { buildProductCopyText } from "../utils/productCopy";
+import { money } from "../utils/money";
 
 const SearchBar: React.FC = () => {
   const { t } = useTranslation();
@@ -195,7 +196,7 @@ const SearchBar: React.FC = () => {
                   </span>
                   <div className="item-details">
                     <span className="item-price">
-                      {t('inventory.table.price', 'Preço')}: <b>R$ {Number(p.salePrice).toFixed(2)}</b>
+                      {t('inventory.table.price', 'Preço')}: <b>R$ {money(Number(p.salePrice))}</b>
                     </span>
                     <span className="item-stock">
                       {t('app.inventory', 'Estoque')}: {p.quantity} {p.unit}
@@ -267,16 +268,16 @@ const SearchBar: React.FC = () => {
                   </span>
                   <div className="item-details">
                     <span className="item-quantity">
-                      {t('search.withdrawQuantity', 'Retirar')}: {(p.unitOut === 'KG' || p.unitOut === 'SC') ? p.usedQuantity.toFixed(3) : p.usedQuantity} {p.unitOut} 
-                      <span style={{ fontSize: '0.9em', color: '#666', marginLeft: '8px' }}>
+                      {t('search.withdrawQuantity', 'Retirar')}: {(p.unitOut === 'KG' || p.unitOut === 'SC') ? p.usedQuantity.toFixed(3) : p.usedQuantity} {p.unitOut || p.unit}
+                      <span style={{ fontSize: '0.9em', color: 'var(--ink-soft)', marginLeft: '8px' }}>
                         ({t('app.inventory', 'Estoque')}: {p.quantity})
                       </span>
                     </span>
                     <span className="item-price">
-                      R$ {Number(p.salePrice).toFixed(2)}
+                      R$ {money(Number(p.salePrice))}
                     </span>
                     <span className="item-total">
-                      {t('search.subtotal', 'Subtotal')}: <b>R$ {(Number(p.salePrice) * p.usedQuantity).toFixed(2)}</b>
+                      {t('search.subtotal', 'Subtotal')}: <b>R$ {money((Number(p.salePrice) * p.usedQuantity))}</b>
                     </span>
                   </div>
                 </div>

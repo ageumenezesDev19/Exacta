@@ -98,6 +98,7 @@
     "addTerm": "Add term",
     "add": "Add",
     "remove": "Remove",
+    "empty": "No terms yet. Products with one of these terms in their name are left out of every search.",
     "added": "Term '{{term}}' added to blacklist.",
     "removed": "Term '{{term}}' removed from blacklist."
   },
@@ -173,6 +174,7 @@
     "lastIgnoredAt": "Last ignored",
     "empty": "The ranking builds itself as you withdraw combinations — it shows which products you use most.",
     "filters": {
+      "label": "Filter ranking",
       "positive": "Most useful",
       "negative": "Least useful",
       "all": "All"

@@ -98,6 +98,7 @@
     "addTerm": "Adicionar termo",
     "add": "Adicionar",
     "remove": "Remover",
+    "empty": "Nenhum termo ainda. Produtos com um destes termos no nome ficam fora das buscas.",
     "added": "Termo '{{term}}' adicionado à lista negra.",
     "removed": "Termo '{{term}}' removido da lista negra."
   },
@@ -172,6 +173,7 @@
     "lastIgnoredAt": "Último ignore",
     "empty": "O ranking se monta conforme você retira combinações — ele mostra quais produtos você mais usa.",
     "filters": {
+      "label": "Filtrar ranking",
       "positive": "Mais funcionais",
       "negative": "Menos funcionais",
       "all": "Todos"

@@ -58,9 +58,12 @@ header {
 
   nav {
     display: flex;
-    gap: 0.25rem;
+    gap: 1rem;
     overflow-x: auto;
     scrollbar-width: none;
+    /* Overlaps the header's hairline, so the active underline sits on it
+       instead of 1px above it. overflow-x would clip anything drawn outside. */
+    margin-bottom: -1px;
 
     &::-webkit-scrollbar {
       display: none;
@@ -71,35 +74,42 @@ header {
       background: transparent;
       color: var(--ink-soft);
       border: none;
-      padding: 0 14px;
-      font-weight: 600;
-      font-size: 0.9375rem;
+      border-radius: 8px 8px 0 0;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 1.05rem;
       white-space: nowrap;
       cursor: pointer;
-      transition: color 0.2s ease;
+      transition: all 0.3s ease;
 
-      /* Sits on the header's own bottom rule, so the active tab reads as
-         connected to the panel below it. */
+      /* The underline grows from the centre to the width of the label. Accent
+         rather than --secondary-color, which now maps to the error red. */
       &::after {
         content: "";
         position: absolute;
-        bottom: -1px;
-        left: 14px;
-        right: 14px;
-        height: 2px;
-        background-color: transparent;
-        transition: background-color 0.2s ease;
+        bottom: 0;
+        left: 16px;
+        right: 16px;
+        height: 3px;
+        border-radius: 2px 2px 0 0;
+        background-color: var(--accent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
       }
 
+      /* Tinted from the text colour, so the fill reads as the old
+         translucent white in dark mode and stays visible in light mode. */
       &:hover:not(.active) {
         color: var(--ink);
+        background: color-mix(in srgb, var(--ink) 7%, transparent);
       }
 
       &.active {
-        color: var(--accent);
+        color: var(--ink);
+        background: color-mix(in srgb, var(--ink) 11%, transparent);
 
         &::after {
-          background-color: var(--accent);
+          transform: scaleX(1);
         }
       }
     }
@@ -125,7 +135,7 @@ header {
 
 @media (max-width: 600px) {
   header {
-    padding: 1rem;
+    padding: 1rem 1rem 0;
     gap: 1rem;
     .header-top { 
       flex-direction: row; 
@@ -141,21 +151,14 @@ header {
       gap: 0.5rem;
       flex-wrap: nowrap;
       overflow-x: auto;
-      padding-bottom: 2px;
-      
-      &::-webkit-scrollbar {
-        height: 2px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--secondary-color);
-        border-radius: 4px;
-      }
-      
-      button { 
-        padding: 6px 12px; 
-        font-size: 0.95rem; 
+
+      button {
+        padding: 6px 12px;
+        font-size: 0.95rem;
         flex: 0 0 auto; // Prevent squishing
         white-space: nowrap;
+
+        &::after { left: 12px; right: 12px; }
       }
     }
   }

@@ -31,14 +31,14 @@ export const RankingView: React.FC = () => {
     <div className="product-table animated-fadein">
       <h2>{t('ranking.title', 'Ranking de Combinações')} <span className="count-badge">({entries.length})</span></h2>
 
-      <div className="pagination-controls" style={{ justifyContent: 'flex-start', marginTop: 0, paddingTop: 0, borderTop: 'none', marginBottom: '1rem' }}>
-        <button className="page-btn" onClick={() => setFilter('positive')} disabled={filter === 'positive'}>
+      <div className="segmented ranking-filters" role="group" aria-label={t('ranking.filters.label', 'Filtrar ranking')}>
+        <button onClick={() => setFilter('positive')} aria-pressed={filter === 'positive'}>
           {t('ranking.filters.positive', 'Mais funcionais')}
         </button>
-        <button className="page-btn" onClick={() => setFilter('negative')} disabled={filter === 'negative'}>
+        <button onClick={() => setFilter('negative')} aria-pressed={filter === 'negative'}>
           {t('ranking.filters.negative', 'Menos funcionais')}
         </button>
-        <button className="page-btn" onClick={() => setFilter('all')} disabled={filter === 'all'}>
+        <button onClick={() => setFilter('all')} aria-pressed={filter === 'all'}>
           {t('ranking.filters.all', 'Todos')}
         </button>
       </div>

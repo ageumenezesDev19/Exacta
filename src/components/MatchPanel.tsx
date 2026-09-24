@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Check, AlertTriangle } from "lucide-react";
 import "../styles/MatchPanel.scss";
+import { money } from "../utils/money";
 
 interface MatchPanelProps {
   /** The amount the operator is trying to hit. */
@@ -13,9 +14,6 @@ interface MatchPanelProps {
 
 /** Anything under half a cent is the same number for a cash register. */
 const CENT = 0.005;
-
-const money = (value: number) =>
-  value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 /**
  * The signature of the interface: the promise of the product is that two

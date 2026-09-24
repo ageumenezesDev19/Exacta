@@ -18,19 +18,18 @@ export const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="language-switcher">
-      <button 
-        className={`lang-btn ${currentLang === 'pt' ? 'active' : ''}`}
+    <div className="language-switcher segmented" role="group" aria-label="Idioma / Language">
+      <button
         onClick={() => changeLanguage('pt')}
         title="Português"
+        aria-pressed={currentLang === 'pt'}
       >
         PT
       </button>
-      <span className="divider">|</span>
-      <button 
-        className={`lang-btn ${currentLang === 'en' ? 'active' : ''}`}
+      <button
         onClick={() => changeLanguage('en')}
         title="English"
+        aria-pressed={currentLang === 'en'}
       >
         EN
       </button>

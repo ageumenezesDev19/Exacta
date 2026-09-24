@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { X } from 'lucide-react';
 import { addToBlacklist as addTerm, removeFromBlacklist as removeTerm } from "../utils/blacklist_utils";
 import { FlaggedProduct } from "../utils/inventory";
 import "../styles/BlacklistManager.scss";
@@ -88,25 +89,40 @@ const BlacklistManager: React.FC<Props> = ({ blacklist, setBlacklist, showNotifi
 
   return (
     <div className="blacklist-manager animated-fadein">
-      <h2>{t('blacklist.title', 'Blacklist')}</h2>
-      <ul>
-        {blacklist.map((term, i) => (
-          <li key={i}>
-            {term}
-            <button onClick={() => handleRemove(term)}>{t('blacklist.remove', 'Remover')}</button>
-          </li>
-        ))}
-      </ul>
+      <h2>
+        {t('blacklist.title', 'Blacklist')}
+        {blacklist.length > 0 && <span className="count-badge">({blacklist.length})</span>}
+      </h2>
       <div className="add-term">
         <input
           type="text"
           placeholder={t('blacklist.addTerm', 'Adicionar termo')}
+          aria-label={t('blacklist.addTerm', 'Adicionar termo')}
           value={termo}
           onChange={e => setTermo(e.target.value)}
-          onKeyPress={e => e.key === 'Enter' && handleAdd()}
+          onKeyDown={e => e.key === 'Enter' && handleAdd()}
         />
         <button onClick={handleAdd}>{t('blacklist.add', 'Adicionar')}</button>
       </div>
+      {blacklist.length === 0 ? (
+        <p className="empty-hint">{t('blacklist.empty', 'Nenhum termo ainda. Produtos com um destes termos no nome ficam fora das buscas.')}</p>
+      ) : (
+        <ul className="term-list">
+          {blacklist.map((term, i) => (
+            <li key={i}>
+              <span className="term" title={term}>{term}</span>
+              <button
+                className="remove-term"
+                onClick={() => handleRemove(term)}
+                aria-label={`${t('blacklist.remove', 'Remover')} ${term}`}
+                title={t('blacklist.remove', 'Remover')}
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {flagFunctionEnabled && (
         <div className="flagged-section">
@@ -128,7 +144,7 @@ const BlacklistManager: React.FC<Props> = ({ blacklist, setBlacklist, showNotifi
                     <span className="flagged-code">{fp.code}</span>
                     <span className="flagged-description">{fp.description}</span>
                   </span>
-                  <button onClick={() => onUnflag(fp.code)}>{t('flagged.unflag', 'Remover')}</button>
+                  <button className="remove-btn" onClick={() => onUnflag(fp.code)}>{t('flagged.unflag', 'Remover')}</button>
                 </li>
               ))}
             </ul>
