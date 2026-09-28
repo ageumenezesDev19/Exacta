@@ -3,6 +3,7 @@ import { Product, FlaggedProduct, ProfileSettings } from '../utils/inventory';
 import { findSingleProductResult, searchNearbyProduct } from '../utils/search';
 import { applyPreferenceToProducts, recordIgnoredCombination } from '../utils/combinationLearning';
 import { ProductWithQuantity } from '../context/InventoryContext';
+import { parseAmount } from '../utils/money';
 
 export type SearchMode = 'combination' | 'product_price' | 'product_name';
 
@@ -18,7 +19,7 @@ interface SearchProps {
 }
 
 export const useSearch = ({ products, blacklist, flaggedProducts, price, searchMode, showNotification, activeProfileSettings, activeProfile }: SearchProps) => {
-  const [searchResult, setSearchResult] = useState<{ status: string; products?: Product[]; combination?: ProductWithQuantity[] } | null>(null);
+  const [searchResult, setSearchResult] = useState<{ status: string; products?: Product[]; combination?: ProductWithQuantity[]; target?: number } | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchCancelled, setSearchCancelled] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
@@ -86,7 +87,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
           return p.description.toLowerCase().includes(searchTerm) && !isBlacklisted && !flaggedCodes.has(p.code);
         }).slice(0, 20); // Limit to 20 results
       } else { // product_price
-        const desiredPrice = Number(price.replace(',', '.'));
+        const desiredPrice = parseAmount(price);
         const unflaggedProducts = products.filter(p => !flaggedCodes.has(p.code) && !currentPreviouslyFound.has(p.code));
         const foundProduct = searchNearbyProduct(unflaggedProducts, desiredPrice, blacklist);
         if (foundProduct) {
@@ -104,7 +105,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
         setSearchResult({ status: 'not_found' });
       }
     } else { // searchMode === 'combination'
-      const desiredPrice = Number(price.replace(',', '.'));
+      const desiredPrice = parseAmount(price);
       if (isNaN(desiredPrice)) {
         showNotification("Preço inválido para busca de combinação.");
         setSearching(false);
@@ -120,7 +121,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
         });
 
         if (singleProductResult) {
-          setSearchResult({ status: 'ok', combination: [singleProductResult] });
+          setSearchResult({ status: 'ok', combination: [singleProductResult], target: desiredPrice });
         } else {
           setSearchResult({ status: 'not_found' });
         }
@@ -205,7 +206,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
         const finalResult = workerResult.filter((p: any) => (p.usedQuantity ?? 0) >= 0.001);
 
         if (finalResult.length > 0) {
-          setSearchResult({ status: 'ok', combination: finalResult });
+          setSearchResult({ status: 'ok', combination: finalResult, target: desiredPrice });
         } else {
           setSearchResult({ status: 'not_found' });
         }

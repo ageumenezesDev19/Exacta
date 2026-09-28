@@ -6,7 +6,7 @@ import { EmptyState } from "./EmptyState";
 import { sampleProducts } from "../data/sampleInventory";
 import { useInventoryContext } from "../context/InventoryContext";
 import "../styles/ProductTable.scss";
-import { money } from "../utils/money";
+import { money, quantity } from "../utils/money";
 
 interface Props {
   products: Product[];
@@ -72,7 +72,7 @@ const ProductTable: React.FC<Props> = ({ products }) => {
               <tr key={`${p.code}-${i}`}>
                 <td className="code-cell">{p.code}</td>
                 <td className="desc-cell">{p.description}</td>
-                <td>{p.quantity}</td>
+                <td>{quantity(Number(p.quantity))}</td>
                 <td>{p.unitOut || p.unit}</td>
                 <td className="price-cell">R$ {money(Number(p.salePrice))}</td>
               </tr>

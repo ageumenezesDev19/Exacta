@@ -31,6 +31,9 @@ export interface ProfileSettings {
   singleProductResultEnabled?: boolean; // true = retorna apenas um produto por valor
 }
 
+/** The smallest fraction the register takes; stock kept finer than this drifts on every withdrawal. */
+export const roundToThousandth = (value: number): number => Math.round(value * 1000) / 1000;
+
 /**
  * Withdraws a product from the stock.
  * This is a placeholder and needs to be implemented with proper state management.
