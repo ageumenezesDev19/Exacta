@@ -9,7 +9,7 @@ import { ProductWithQuantity } from "../context/InventoryContext";
 import { SearchMode } from "../hooks/useSearch";
 import { useInventoryContext } from "../context/InventoryContext";
 import { buildProductCopyText } from "../utils/productCopy";
-import { money } from "../utils/money";
+import { money, quantity } from "../utils/money";
 
 const SearchBar: React.FC = () => {
   const { t } = useTranslation();
@@ -199,7 +199,7 @@ const SearchBar: React.FC = () => {
                       {t('inventory.table.price', 'Preço')}: <b>R$ {money(Number(p.salePrice))}</b>
                     </span>
                     <span className="item-stock">
-                      {t('app.inventory', 'Estoque')}: {p.quantity} {p.unit}
+                      {t('app.inventory', 'Estoque')}: {quantity(Number(p.quantity))} {p.unit}
                     </span>
                   </div>
                 </div>
@@ -241,8 +241,10 @@ const SearchBar: React.FC = () => {
           {/* Only the items still in the combination count: the total used to
               include ones the operator had already removed, so it disagreed
               with what would actually be withdrawn. */}
+          {/* The target is the number the search ran with, not the live field:
+              reading the field again missed "7,5" (NaN) and followed later edits. */}
           <MatchPanel
-            target={Number(price) || 0}
+            target={result.target ?? 0}
             sum={result.combination
               .filter((p: any) => !deletedCombinationItems.has(p.code))
               .reduce((acc: number, p: any) => acc + (p.salePrice ?? 0) * p.usedQuantity, 0)}
@@ -268,9 +270,9 @@ const SearchBar: React.FC = () => {
                   </span>
                   <div className="item-details">
                     <span className="item-quantity">
-                      {t('search.withdrawQuantity', 'Retirar')}: {(p.unitOut === 'KG' || p.unitOut === 'SC') ? p.usedQuantity.toFixed(3) : p.usedQuantity} {p.unitOut || p.unit}
+                      {t('search.withdrawQuantity', 'Retirar')}: {quantity(p.usedQuantity, (p.unitOut === 'KG' || p.unitOut === 'SC') ? 3 : 0)} {p.unitOut || p.unit}
                       <span style={{ fontSize: '0.9em', color: 'var(--ink-soft)', marginLeft: '8px' }}>
-                        ({t('app.inventory', 'Estoque')}: {p.quantity})
+                        ({t('app.inventory', 'Estoque')}: {quantity(Number(p.quantity))})
                       </span>
                     </span>
                     <span className="item-price">

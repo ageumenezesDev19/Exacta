@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import "../styles/WithdrawnTable.scss";
 import { Product } from "../utils/inventory";
-import { money } from "../utils/money";
+import { money, quantity } from "../utils/money";
 
 export interface Withdrawn {
   id: string;
@@ -175,7 +175,7 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
                 <tr key={p.id}>
                   <td>{p.product?.code || '---'}</td>
                   <td>{p.product?.description || '---'}</td>
-                  <td>{p.withdrawnQuantity}</td>
+                  <td>{quantity(Number(p.withdrawnQuantity))}</td>
                   <td>R$ {money(Number(p.product?.salePrice ?? 0))}</td>
                   <td>{p.date ? new Date(p.date.split(" ")[0] + 'T00:00:00').toLocaleDateString(currentLang) : '---'}</td>
                   <td>
@@ -222,7 +222,7 @@ const WithdrawnTable: React.FC<Props> = ({ products, handleDelete, handleFlag, f
                         <ul>
                           {withdrawnByMonth[month][dateString].map((p) => (
                             <li key={p.id}>
-                              {p.product?.description || '---'} ({p.withdrawnQuantity}x) - R$ {money(Number(p.product?.salePrice ?? 0))}
+                              {p.product?.description || '---'} ({quantity(Number(p.withdrawnQuantity))}x) - R$ {money(Number(p.product?.salePrice ?? 0))}
                               <button className="delete-btn-small" onClick={() => handleDelete(p.id)}>
                                 <span>
                                   X

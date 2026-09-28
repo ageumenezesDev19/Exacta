@@ -1,4 +1,4 @@
-import { Product } from './inventory';
+import { Product, roundToThousandth } from './inventory';
 
 interface ProductWithDifference extends Product {
   Difference?: number;
@@ -37,8 +37,6 @@ const isBlacklisted = (product: Product, blacklist: string[]): boolean => {
     product.code.toLowerCase().includes(term.toLowerCase())
   );
 };
-
-const roundToThousandth = (value: number): number => Math.round(value * 1000) / 1000;
 
 const floorToThousandth = (value: number): number => Math.floor(value * 1000) / 1000;
 

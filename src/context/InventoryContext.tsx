@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Product, FlaggedProduct, ProfileSettings } from "../utils/inventory";
+import { Product, FlaggedProduct, ProfileSettings, roundToThousandth } from "../utils/inventory";
 import { Withdrawn } from "../components/WithdrawnTable";
 import { useNotification } from "../hooks/useNotification";
 import { useInventory } from "../hooks/useInventory";
@@ -29,7 +29,7 @@ interface InventoryContextType {
   view: string;
 
   // Search State
-  searchResult: { status: string; products?: Product[]; combination?: ProductWithQuantity[] } | null;
+  searchResult: { status: string; products?: Product[]; combination?: ProductWithQuantity[]; target?: number } | null;
   searching: boolean;
   showCancel: boolean;
   price: string;
@@ -130,7 +130,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
       const newProducts = prevProducts
         .map(p =>
           p.code === productToWithdraw.code
-            ? { ...p, quantity: p.quantity - quantity }
+            ? { ...p, quantity: roundToThousandth(p.quantity - quantity) }
             : p
         )
         .filter(p => p.quantity > 0);
@@ -182,7 +182,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
       return prevProducts
         .map(p => {
           if (actualWithdrawals.has(p.code)) {
-            return { ...p, quantity: p.quantity - actualWithdrawals.get(p.code)! };
+            return { ...p, quantity: roundToThousandth(p.quantity - actualWithdrawals.get(p.code)!) };
           }
           return p;
         })
@@ -251,7 +251,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
       if (existingProduct) {
         return prevProducts.map(p => 
           p.code === withdrawnToRestore.product.code 
-            ? { ...p, quantity: p.quantity + withdrawnToRestore.withdrawnQuantity } 
+            ? { ...p, quantity: roundToThousandth(p.quantity + withdrawnToRestore.withdrawnQuantity) } 
             : p
         );
       } else {
