@@ -18,19 +18,6 @@ interface SingleProductSearchOptions {
   quantityLimit?: number;
 }
 
-const isFractionalUnit = (product: Product): boolean => {
-  const unit = (product.unitOut || product.unit || '').toString().toLowerCase();
-  return unit.includes('kg') ||
-    unit.includes('kilo') ||
-    unit.includes('sc') ||
-    unit.includes('saco') ||
-    unit.includes('fdo') ||
-    unit.includes('fd') ||
-    unit.includes('sh') ||
-    unit.includes('lt') ||
-    unit.includes('litro');
-};
-
 const isBlacklisted = (product: Product, blacklist: string[]): boolean => {
   return blacklist.some(term =>
     product.description.toLowerCase().includes(term.toLowerCase()) ||
@@ -77,7 +64,7 @@ export function findSingleProductResult(
 
     const quantityCandidates = new Set<number>();
 
-    if (isFractionalUnit(product)) {
+    if (product.fractional) {
       const idealQuantity = targetCents / priceCents;
       const cappedIdeal = Math.min(idealQuantity, maxQuantity);
       quantityCandidates.add(roundToThousandth(cappedIdeal));
@@ -94,7 +81,7 @@ export function findSingleProductResult(
     }
 
     for (const rawQuantity of quantityCandidates) {
-      const usedQuantity = isFractionalUnit(product)
+      const usedQuantity = product.fractional
         ? roundToThousandth(rawQuantity)
         : Math.floor(rawQuantity);
       if (usedQuantity < 0.001 || usedQuantity > maxQuantity + 0.0001) continue;

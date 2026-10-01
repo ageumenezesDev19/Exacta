@@ -7,6 +7,7 @@ import { InventoryView } from "./views/InventoryView";
 import { WithdrawnView } from "./views/WithdrawnView";
 import { BlacklistView } from "./views/BlacklistView";
 import { RankingView } from "./views/RankingView";
+import { FractioningView } from "./views/FractioningView";
 import { ClearDataModal } from "./components/ClearDataModal";
 import Loader from "./components/Loader";
 import { useInventoryContext } from "./context/InventoryContext";
@@ -108,6 +109,7 @@ const App: React.FC = () => {
           <button onClick={() => setView("withdrawn")} className={view === 'withdrawn' ? 'active' : ''}>{t('app.withdrawn')}</button>
           <button onClick={() => setView("blacklist")} className={view === 'blacklist' ? 'active' : ''}>{t('app.blacklist')}</button>
           <button onClick={() => setView("ranking")} className={view === 'ranking' ? 'active' : ''}>{t('app.ranking', 'Ranking')}</button>
+          <button onClick={() => setView("fractioning")} className={view === 'fractioning' ? 'active' : ''}>{t('app.fractioning', 'Fracionamento')}</button>
         </nav>
       </header>
       <main>
@@ -125,6 +127,9 @@ const App: React.FC = () => {
           )}
           {view === "ranking" && (
             <RankingView />
+          )}
+          {view === "fractioning" && (
+            <FractioningView />
           )}
         </ErrorBoundary>
       </main>

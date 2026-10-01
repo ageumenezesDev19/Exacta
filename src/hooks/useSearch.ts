@@ -4,6 +4,7 @@ import { findSingleProductResult, searchNearbyProduct } from '../utils/search';
 import { applyPreferenceToProducts, recordIgnoredCombination } from '../utils/combinationLearning';
 import { ProductWithQuantity } from '../context/InventoryContext';
 import { parseAmount } from '../utils/money';
+import { FractionRule, compileFractioning } from '../utils/fractioning';
 
 export type SearchMode = 'combination' | 'product_price' | 'product_name';
 
@@ -16,9 +17,10 @@ interface SearchProps {
   showNotification: (message: string) => void;
   activeProfileSettings: ProfileSettings;
   activeProfile: string;
+  fractionRules: FractionRule[];
 }
 
-export const useSearch = ({ products, blacklist, flaggedProducts, price, searchMode, showNotification, activeProfileSettings, activeProfile }: SearchProps) => {
+export const useSearch = ({ products, blacklist, flaggedProducts, price, searchMode, showNotification, activeProfileSettings, activeProfile, fractionRules }: SearchProps) => {
   const [searchResult, setSearchResult] = useState<{ status: string; products?: Product[]; combination?: ProductWithQuantity[]; target?: number } | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchCancelled, setSearchCancelled] = useState(false);
@@ -112,8 +114,11 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
         return;
       }
 
+      const isFractional = compileFractioning(fractionRules);
+      const withFractioning = <T extends Product>(list: T[]) => list.map(p => ({ ...p, fractional: isFractional(p) }));
+
       if (activeProfileSettings.singleProductResultEnabled) {
-        const singleProductResult = findSingleProductResult(applyPreferenceToProducts(activeProfile, products), desiredPrice, {
+        const singleProductResult = findSingleProductResult(withFractioning(applyPreferenceToProducts(activeProfile, products)), desiredPrice, {
           blacklist,
           flaggedCodes,
           previouslyFound: currentPreviouslyFound,
@@ -141,7 +146,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
       const afterFlagged = afterStock.filter(p => !flaggedCodes.has(p.code));
       const afterBlacklist = afterFlagged.filter(p => !blacklist.some(term => p.description.toLowerCase().includes(term.toLowerCase()) || p.code.toLowerCase().includes(term.toLowerCase())));
       const afterPrice = afterBlacklist.filter(p => (p.salePrice ?? 0) > 0);
-      const candidates = applyPreferenceToProducts(activeProfile, afterPrice).sort((a, b) => {
+      const candidates = withFractioning(applyPreferenceToProducts(activeProfile, afterPrice)).sort((a, b) => {
         const priceDiff = (b.salePrice ?? 0) - (a.salePrice ?? 0);
         if (priceDiff !== 0) return priceDiff;
         const preferenceDiff = b.preferenceScore - a.preferenceScore;

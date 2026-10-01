@@ -9,7 +9,8 @@
     "clearAllData": "Clear all data",
     "cancelSearch": "Cancel Search",
     "madeBy": "Made by Ageu M. Costa",
-    "ranking": "Ranking"
+    "ranking": "Ranking",
+    "fractioning": "Fractioning"
   },
   "migration": {
     "prompt": "This profile ('{{name}}') has data in a legacy format (Portuguese). Do you want to migrate it to the current standard (English)?",
@@ -188,5 +189,27 @@
     "under": "short by R$ {{amount}}",
     "itemCount": "{{count}} items",
     "itemCount_one": "{{count}} item"
+  },
+  "fractioning": {
+    "title": "Fractioning",
+    "intro": "Products that may be withdrawn in fractions, such as 0.048 KG. Everything else goes out in whole units.",
+    "byUnit": "By unit",
+    "byUnitHint": "The unit must match exactly: KG does not include KGS.",
+    "unitPlaceholder": "e.g. KG",
+    "unitEmpty": "No units. Only names decide what fractions.",
+    "byName": "By name",
+    "byNameHint": "A whole word in the product name: Tela includes TELA MOSQUITEIRO, but not CASTELA.",
+    "namePlaceholder": "e.g. Tela",
+    "nameEmpty": "No names yet. Use them for products whose unit does not say they fraction.",
+    "add": "Add",
+    "remove": "Remove",
+    "toggle": "Fraction {{value}}",
+    "matchesNone": "no products",
+    "matches": "{{count}} products",
+    "matches_one": "{{count}} product",
+    "duplicate": "\"{{value}}\" is already on the list.",
+    "restore": "Restore defaults",
+    "restoreConfirm": "Go back to the default list? This profile's rules will be replaced.",
+    "restored": "Default list restored."
   }
 }

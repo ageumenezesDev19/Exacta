@@ -4,7 +4,7 @@ interface Product {
   code: string;
   name: string;
   price: number;
-  type: 'UND' | 'KG' | 'SC';
+  fractional: boolean;
   inventory: number;
   preferenceScore: number;
 }
@@ -63,8 +63,7 @@ const findCombinationHeuristic = (
        const availStock = inventory[p.code] || 0;
        
        let takeQty = 0;
-       if (p.type === 'KG' || p.type === 'SC') {
-          // Fractional
+       if (p.fractional) {
           const neededQty = remainingCents / priceCents;
           takeQty = Math.min(neededQty, availStock);
           if (quantityLimit !== undefined) takeQty = Math.min(takeQty, quantityLimit);
@@ -72,7 +71,7 @@ const findCombinationHeuristic = (
        } else {
           // Unit
           const maxUnits = Math.floor(remainingCents / priceCents);
-          takeQty = Math.min(maxUnits, availStock);
+          takeQty = Math.min(maxUnits, Math.floor(availStock));
           if (quantityLimit !== undefined) takeQty = Math.min(takeQty, quantityLimit);
        }
 
@@ -145,17 +144,11 @@ self.onmessage = (e: MessageEvent) => {
       const priceNum = typeof p.salePrice === 'string' ? parseFloat(p.salePrice.replace(/\./g, '').replace(',', '.')) : Number(p.salePrice);
       const inventoryNum = typeof p.quantity === 'string' ? parseFloat(p.quantity.replace(/\./g, '').replace(',', '.')) : Number(p.quantity);
 
-      const rawUnit = (p.unitOut || p.unit || '').toString().toLowerCase();
-      let type: Product['type'] = 'UND';
-      if (rawUnit.includes('kg') || rawUnit.includes('kilo')) type = 'KG';
-      else if (rawUnit.includes('sc') || rawUnit.includes('saco') || rawUnit.includes('fdo') || rawUnit.includes('fd') || rawUnit.includes('sh') || rawUnit.includes('lt') || rawUnit.includes('litro')) type = 'SC';
-      else type = 'UND';
-
       return {
         code: String(p.code || p.barcode || ''),
         name: String(p.description || ''),
         price: isNaN(priceNum) ? 0 : priceNum,
-        type: type,
+        fractional: p.fractional === true,
         inventory: isNaN(inventoryNum) ? 0 : inventoryNum,
         preferenceScore: Number(p.preferenceScore) || 0,
       };
