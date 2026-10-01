@@ -1,4 +1,5 @@
 import { Product, roundToThousandth } from './inventory';
+import { valueBand } from './fractioning';
 
 interface ProductWithDifference extends Product {
   Difference?: number;
@@ -16,6 +17,8 @@ interface SingleProductSearchOptions {
   flaggedCodes?: Set<string>;
   previouslyFound?: Set<string>;
   quantityLimit?: number;
+  /** Splits low from high values; undefined keeps the plain closest-total ordering. */
+  cutoff?: number | null;
 }
 
 const isBlacklisted = (product: Product, blacklist: string[]): boolean => {
@@ -28,6 +31,42 @@ const isBlacklisted = (product: Product, blacklist: string[]): boolean => {
 const floorToThousandth = (value: number): number => Math.floor(value * 1000) / 1000;
 
 const ceilToThousandth = (value: number): number => Math.ceil(value * 1000) / 1000;
+
+const byClosestThenRanking = (a: SingleProductResult, b: SingleProductResult): number =>
+  a.differenceCents - b.differenceCents ||
+  a.usedQuantity - b.usedQuantity ||
+  (b.preferenceScore ?? 0) - (a.preferenceScore ?? 0) ||
+  a.code.localeCompare(b.code);
+
+const minBy = <T>(items: T[], compare: (a: T, b: T) => number): T | undefined =>
+  items.reduce<T | undefined>((best, item) => (best === undefined || compare(item, best) < 0 ? item : best), undefined);
+
+/**
+ * Low values put fractional products first; high values keep whole ones and, when none closes
+ * exactly, fall short rather than over so a fraction can complete the rest. The learned ranking
+ * still decides between candidates of the same kind and distance.
+ */
+const pickBest = (
+  candidates: SingleProductResult[],
+  targetCents: number,
+  cutoff: number | null | undefined
+): SingleProductResult | undefined => {
+  if (cutoff === undefined) return minBy(candidates, byClosestThenRanking);
+
+  if (valueBand(targetCents / 100, cutoff) === 'low') {
+    return minBy(candidates, (a, b) =>
+      a.differenceCents - b.differenceCents ||
+      Number(!a.fractional) - Number(!b.fractional) ||
+      byClosestThenRanking(a, b)
+    );
+  }
+
+  const cutoffCents = Math.round((cutoff ?? 0) * 100);
+  const allowed = candidates.filter(c => !c.fractional || Math.round(c.total * 100) <= cutoffCents);
+  if (allowed.length === 0) return minBy(candidates, byClosestThenRanking);
+  const isOver = (c: SingleProductResult) => Number(Math.round(c.total * 100) > targetCents);
+  return minBy(allowed, (a, b) => isOver(a) - isOver(b) || byClosestThenRanking(a, b));
+};
 
 export function findSingleProductResult(
   df: Product[],
@@ -42,7 +81,7 @@ export function findSingleProductResult(
   const previouslyFound = options.previouslyFound ?? new Set<string>();
   const quantityLimit = options.quantityLimit;
 
-  let best: SingleProductResult | undefined;
+  const candidates: SingleProductResult[] = [];
 
   for (const product of df) {
     if (previouslyFound.has(product.code)) continue;
@@ -95,22 +134,11 @@ export function findSingleProductResult(
         preferenceScore: Number((product as Product & { preferenceScore?: number }).preferenceScore) || 0,
       };
 
-      const isBetter = !best ||
-        candidate.differenceCents < best.differenceCents ||
-        (candidate.differenceCents === best.differenceCents && candidate.usedQuantity < best.usedQuantity) ||
-        (candidate.differenceCents === best.differenceCents &&
-          candidate.usedQuantity === best.usedQuantity &&
-          (candidate.preferenceScore ?? 0) > (best.preferenceScore ?? 0)) ||
-        (candidate.differenceCents === best.differenceCents &&
-          candidate.usedQuantity === best.usedQuantity &&
-          (candidate.preferenceScore ?? 0) === (best.preferenceScore ?? 0) &&
-          candidate.code.localeCompare(best.code) < 0);
-
-      if (isBetter) best = candidate;
+      candidates.push(candidate);
     }
   }
 
-  return best;
+  return pickBest(candidates, targetCents, options.cutoff);
 }
 
 export function searchNearbyProducts(df: Product[], desiredPrice: number, n = 3): Product[] | undefined {

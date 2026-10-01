@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Product, FlaggedProduct, ProfileSettings } from '../utils/inventory';
 import { findSingleProductResult, searchNearbyProduct } from '../utils/search';
 import { applyPreferenceToProducts, recordIgnoredCombination } from '../utils/combinationLearning';
@@ -18,9 +19,11 @@ interface SearchProps {
   activeProfileSettings: ProfileSettings;
   activeProfile: string;
   fractionRules: FractionRule[];
+  fractionCutoff: number | null;
 }
 
-export const useSearch = ({ products, blacklist, flaggedProducts, price, searchMode, showNotification, activeProfileSettings, activeProfile, fractionRules }: SearchProps) => {
+export const useSearch = ({ products, blacklist, flaggedProducts, price, searchMode, showNotification, activeProfileSettings, activeProfile, fractionRules, fractionCutoff }: SearchProps) => {
+  const { t } = useTranslation();
   const [searchResult, setSearchResult] = useState<{ status: string; products?: Product[]; combination?: ProductWithQuantity[]; target?: number } | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchCancelled, setSearchCancelled] = useState(false);
@@ -123,6 +126,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
           flaggedCodes,
           previouslyFound: currentPreviouslyFound,
           quantityLimit: activeProfileSettings.quantityLimit,
+          cutoff: fractionCutoff,
         });
 
         if (singleProductResult) {
@@ -185,6 +189,7 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
             used: Array.from(currentPreviouslyFound),
             blacklist,
             quantityLimit: activeProfileSettings.quantityLimit,
+            cutoff: fractionCutoff,
           },
         });
       });
@@ -222,6 +227,26 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
     setSearching(false);
   };
 
+  /** Adds the fractional product that best covers what a whole-unit result left missing. */
+  const completeWithFraction = (missing: number, excludedCodes: string[]) => {
+    if (!searchResult?.combination || missing < 0.01) return;
+    const isFractional = compileFractioning(fractionRules);
+    const fractionalStock = applyPreferenceToProducts(activeProfile, products)
+      .map(p => ({ ...p, fractional: isFractional(p) }))
+      .filter(p => p.fractional);
+    const piece = findSingleProductResult(fractionalStock, missing, {
+      blacklist,
+      flaggedCodes: new Set(flaggedProducts.map(f => f.code)),
+      previouslyFound: new Set([...excludedCodes, ...searchResult.combination.map(p => p.code)]),
+      quantityLimit: activeProfileSettings.quantityLimit,
+    });
+    if (!piece || piece.differenceCents >= Math.round(missing * 100)) {
+      showNotification(t('match.noFraction', 'Nenhum produto fracionado cobre essa diferença.'));
+      return;
+    }
+    setSearchResult({ ...searchResult, combination: [...searchResult.combination, piece] });
+  };
+
   return {
     searchResult,
     setSearchResult,
@@ -230,5 +255,6 @@ export const useSearch = ({ products, blacklist, flaggedProducts, price, searchM
     handleCancelSearch,
     handleRecalculate,
     handleSearch,
+    completeWithFraction,
   };
 };

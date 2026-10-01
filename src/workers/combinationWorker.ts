@@ -1,5 +1,7 @@
 // src/workers/combinationWorker.ts
 
+import { valueBand } from '../utils/fractioning';
+
 interface Product {
   code: string;
   name: string;
@@ -15,6 +17,7 @@ interface Combination {
   quantity: { [key: string]: number };
   diff: number;
   preferenceScore: number;
+  fractionalCents: number;
 }
 
 // Helper to calculate total in cents to avoid floating point issues
@@ -33,16 +36,27 @@ const calculateTotalInCents = (
 };
 
 // Extremely fast Greedy randomized algorithm
-const findCombinationHeuristic = (
+export const findCombinationHeuristic = (
   products: Product[],
   targetPrice: number,
   inventory: { [key: string]: number },
   timeoutMs: number = 2000,
-  quantityLimit?: number
+  quantityLimit?: number,
+  cutoff: number | null = null
 ): Combination | null => {
   const targetCents = Math.round(targetPrice * 100);
   const productsInCents = new Map<string, number>();
   products.forEach(p => productsInCents.set(p.code, Math.round(p.price * 100)));
+
+  // Low values reach for fractional products first. High values go through whole ones first and
+  // let fractions only complete the rest, never carrying more than the cutoff between them.
+  const isHigh = valueBand(targetPrice, cutoff) === 'high';
+  const fractionalBudgetCents = isHigh ? Math.round((cutoff ?? 0) * 100) : Infinity;
+  const inBandOrder = (ordered: Product[]) => {
+    const whole = ordered.filter(p => !p.fractional);
+    const fractional = ordered.filter(p => p.fractional);
+    return isHigh ? [...whole, ...fractional] : [...fractional, ...whole];
+  };
 
   let bestCombination: Combination | null = null;
   let minDiff = Infinity;
@@ -52,6 +66,7 @@ const findCombinationHeuristic = (
   // Try pure greedy first, sorting by descending price
   const greedySearch = (shuffledProducts: Product[]) => {
     let remainingCents = targetCents;
+    let fractionalCents = 0;
     const currentQuantity: { [key: string]: number } = {};
     const currentCombo: Product[] = [];
 
@@ -64,7 +79,7 @@ const findCombinationHeuristic = (
        
        let takeQty = 0;
        if (p.fractional) {
-          const neededQty = remainingCents / priceCents;
+          const neededQty = Math.min(remainingCents, fractionalBudgetCents - fractionalCents) / priceCents;
           takeQty = Math.min(neededQty, availStock);
           if (quantityLimit !== undefined) takeQty = Math.min(takeQty, quantityLimit);
           takeQty = Math.floor(takeQty * 1000) / 1000;
@@ -79,6 +94,7 @@ const findCombinationHeuristic = (
           currentCombo.push(p);
           currentQuantity[p.code] = takeQty;
           remainingCents -= Math.round(takeQty * priceCents);
+          if (p.fractional) fractionalCents += Math.round(takeQty * priceCents);
        }
     }
 
@@ -86,9 +102,14 @@ const findCombinationHeuristic = (
     const diff = Math.abs(totalCents - targetCents);
     const preferenceScore = currentCombo.reduce((acc, product) => acc + product.preferenceScore, 0);
 
+    // Equally close: the share in fractions follows the band, then fewer items, then the learned ranking.
+    const shareOrder = bestCombination === null ? 0 : isHigh
+      ? bestCombination.fractionalCents - fractionalCents
+      : fractionalCents - bestCombination.fractionalCents;
     const isBetter = diff < minDiff ||
-      (diff === minDiff && currentCombo.length < (bestCombination?.products.length ?? Infinity)) ||
-      (diff === minDiff &&
+      (diff === minDiff && shareOrder > 0) ||
+      (diff === minDiff && shareOrder === 0 && currentCombo.length < (bestCombination?.products.length ?? Infinity)) ||
+      (diff === minDiff && shareOrder === 0 &&
         currentCombo.length === (bestCombination?.products.length ?? Infinity) &&
         preferenceScore > (bestCombination?.preferenceScore ?? -Infinity));
     if (isBetter) {
@@ -98,24 +119,25 @@ const findCombinationHeuristic = (
           total: totalCents / 100,
           quantity: currentQuantity,
           diff,
-          preferenceScore
+          preferenceScore,
+          fractionalCents
        };
     }
   };
 
   // Iteration 1: pure descending price
-  const descProducts = [...products].sort((a, b) => b.price - a.price);
+  const descProducts = inBandOrder([...products].sort((a, b) => b.price - a.price));
   greedySearch(descProducts);
   
   // Iteration 2: pure ascending price
-  const ascProducts = [...products].sort((a, b) => a.price - b.price);
+  const ascProducts = inBandOrder([...products].sort((a, b) => a.price - b.price));
   greedySearch(ascProducts);
 
   // Iterations: Randomized greedy for up to timeoutMs
   let iterations = 0;
   while (Date.now() - startTime < timeoutMs && minDiff > 0) {
      iterations++;
-     const shuffled = [...products].sort(() => Math.random() - 0.5);
+     const shuffled = inBandOrder([...products].sort(() => Math.random() - 0.5));
      greedySearch(shuffled);
   }
   
@@ -138,7 +160,7 @@ self.onmessage = (e: MessageEvent) => {
   const { type, payload } = e.data;
 
   if (type === 'startSearch') {
-    const { df, targetPrice, blacklist, quantityLimit } = payload;
+    const { df, targetPrice, blacklist, quantityLimit, cutoff } = payload;
 
     const productsRaw: Product[] = df.map((p: any) => {
       const priceNum = typeof p.salePrice === 'string' ? parseFloat(p.salePrice.replace(/\./g, '').replace(',', '.')) : Number(p.salePrice);
@@ -169,7 +191,7 @@ self.onmessage = (e: MessageEvent) => {
       });
 
       // Pass the 2 seconds timeout to the heuristic
-      const result = findCombinationHeuristic(filteredProducts, targetPrice, inventory, 2000, quantityLimit);
+      const result = findCombinationHeuristic(filteredProducts, targetPrice, inventory, 2000, quantityLimit, cutoff ?? null);
       
       if (result) {
         let isStockValid = true;

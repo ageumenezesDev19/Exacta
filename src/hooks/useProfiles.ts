@@ -147,13 +147,25 @@ export function useProfiles() {
     window.dispatchEvent(new CustomEvent('profileSettingsChanged'));
   }, [activeProfile]);
 
+  // Every component calling this hook holds its own copy of the active profile. A switch made in
+  // one copy (the profile picker) must reach the others, or the context keeps the old profile's
+  // settings and learning until a reload.
   useEffect(() => {
+    const handleProfileChanged = () => {
+      const storedActive = window.localStorage.getItem(ACTIVE_PROFILE_KEY) || DEFAULT_PROFILE;
+      setActiveProfileState(storedActive);
+      setActiveProfileSettingsState(getProfileSettings(storedActive));
+    };
     const handleSettingsChanged = () => {
       const storedActive = window.localStorage.getItem(ACTIVE_PROFILE_KEY) || DEFAULT_PROFILE;
       setActiveProfileSettingsState(getProfileSettings(storedActive));
     };
+    window.addEventListener('profileChanged', handleProfileChanged);
     window.addEventListener('profileSettingsChanged', handleSettingsChanged);
-    return () => window.removeEventListener('profileSettingsChanged', handleSettingsChanged);
+    return () => {
+      window.removeEventListener('profileChanged', handleProfileChanged);
+      window.removeEventListener('profileSettingsChanged', handleSettingsChanged);
+    };
   }, []);
 
   const createProfile = useCallback((profileName: string, settings: ProfileSettings = DEFAULT_PROFILE_SETTINGS) => {

@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 /* Same card, title and add field as the blacklist: both views are lists of rules for the search. */
 .fractioning {
   background: var(--card-bg);
@@ -23,6 +25,58 @@
     font-size: 0.85em;
     font-weight: normal;
     color: var(--ink-soft);
+  }
+}
+
+/* The number every search is measured against, so it sits above the rules that feed it. */
+.cutoff-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem 2rem;
+  align-items: start;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+
+  .cutoff-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .cutoff-value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+    font-family: $font-mono;
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cutoff-source,
+  .cutoff-none {
+    font-family: $font-family;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  .cutoff-none { display: block; margin: 0.5rem 0; }
+
+  .rule-hint { margin: 0; color: var(--ink-soft); font-size: 0.85rem; }
+
+  .cutoff-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+
+    .add-rule { width: 100%; }
   }
 }
 
@@ -167,18 +221,18 @@
   display: flex;
   justify-content: flex-start;
   margin-top: 1.5rem;
+}
 
-  .restore-btn {
-    min-height: 40px;
-    padding: 0 1rem;
-    background: transparent;
-    color: var(--ink-soft);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
+.fractioning .restore-btn {
+  min-height: 40px;
+  padding: 0 1rem;
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
 
-    &:hover { color: var(--font-color); border-color: var(--ink-soft); }
-  }
+  &:hover { color: var(--font-color); border-color: var(--ink-soft); }
 }

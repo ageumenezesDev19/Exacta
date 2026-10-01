@@ -188,7 +188,10 @@
     "over": "over by R$ {{amount}}",
     "under": "short by R$ {{amount}}",
     "itemCount": "{{count}} items",
-    "itemCount_one": "{{count}} item"
+    "itemCount_one": "{{count}} item",
+    "complete": "Complete",
+    "completeLabel": "Complete with a fractional product",
+    "noFraction": "No fractional product covers that difference."
   },
   "fractioning": {
     "title": "Fractioning",
@@ -210,6 +213,14 @@
     "duplicate": "\"{{value}}\" is already on the list.",
     "restore": "Restore defaults",
     "restoreConfirm": "Go back to the default list? This profile's rules will be replaced.",
-    "restored": "Default list restored."
+    "restored": "Default list restored.",
+    "cutoff": "Fractioning preference range",
+    "cutoffNone": "Nothing in this stock fractions.",
+    "cutoffManual": "set by you",
+    "cutoffHint": "Below it the search prefers fractional products; above it, whole ones, with a fraction only completing the rest.",
+    "cutoffSet": "Set the fractioning preference range",
+    "cutoffSave": "Set",
+    "cutoffReset": "Back to automatic",
+    "cutoffInvalid": "Invalid value for the preference range."
   }
 }

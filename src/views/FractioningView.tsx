@@ -5,6 +5,7 @@ import { useInventoryContext } from "../context/InventoryContext";
 import { Switch } from "../components/Switch";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { FractionRule, compileFractioning, normalizeRuleValue, ruleId } from "../utils/fractioning";
+import { money, parseAmount } from "../utils/money";
 import "../styles/FractioningView.scss";
 
 interface RuleSectionProps {
@@ -91,6 +92,71 @@ const RuleSection: React.FC<RuleSectionProps> = ({
   );
 };
 
+const CutoffBlock: React.FC = () => {
+  const { t } = useTranslation();
+  const { fractionCutoff, automaticFractionCutoff, activeProfileSettings, updateActiveProfileSettings, showNotification } = useInventoryContext();
+  const [draft, setDraft] = useState("");
+  const isManual = activeProfileSettings.fractionCutoff !== undefined;
+
+  const save = () => {
+    const value = parseAmount(draft);
+    if (!draft.trim()) return;
+    if (!Number.isFinite(value) || value <= 0) {
+      showNotification(t("fractioning.cutoffInvalid", "Valor inválido para a faixa de preferência."));
+      return;
+    }
+    updateActiveProfileSettings({ ...activeProfileSettings, fractionCutoff: Math.round(value * 100) / 100 });
+    setDraft("");
+  };
+
+  const backToAutomatic = () => {
+    const { fractionCutoff: _manual, ...rest } = activeProfileSettings;
+    updateActiveProfileSettings(rest);
+  };
+
+  return (
+    <section className="cutoff-block">
+      <div className="cutoff-figure">
+        <span className="cutoff-label">{t("fractioning.cutoff", "Faixa de preferência de fracionamento")}</span>
+        {fractionCutoff === null ? (
+          <span className="cutoff-none">{t("fractioning.cutoffNone", "Nada fraciona neste estoque.")}</span>
+        ) : (
+          <span className="cutoff-value">
+            R$ {money(fractionCutoff)}
+            {isManual && (
+              <span className="cutoff-source">{t("fractioning.cutoffManual", "definido por você")}</span>
+            )}
+          </span>
+        )}
+        <p className="rule-hint">
+          {t("fractioning.cutoffHint", "Abaixo desse valor a busca prefere fracionados; acima, prefere inteiros e o fracionado só completa o resto.")}
+        </p>
+      </div>
+
+      <div className="cutoff-controls">
+        <div className="add-rule">
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder={automaticFractionCutoff === null ? "Ex.: 20,00" : money(automaticFractionCutoff)}
+            aria-label={t("fractioning.cutoffSet", "Definir faixa de preferência de fracionamento")}
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && save()}
+          />
+          <button onClick={save}>{t("fractioning.cutoffSave", "Definir")}</button>
+        </div>
+        {isManual && (
+          <button className="restore-btn" onClick={backToAutomatic}>
+            {t("fractioning.cutoffReset", "Voltar ao automático")}
+            {automaticFractionCutoff !== null && ` (R$ ${money(automaticFractionCutoff)})`}
+          </button>
+        )}
+      </div>
+    </section>
+  );
+};
+
 export const FractioningView: React.FC = () => {
   const { t } = useTranslation();
   const { products, fractionRules, fractionRulesAreDefault, setFractionRules, showNotification } = useInventoryContext();
@@ -133,6 +199,8 @@ export const FractioningView: React.FC = () => {
       <p className="fractioning-intro">
         {t("fractioning.intro", "Produtos que podem sair em frações, como 0,048 KG. Os demais saem só em unidades inteiras.")}
       </p>
+
+      <CutoffBlock />
 
       <div className="rule-sections">
         <RuleSection

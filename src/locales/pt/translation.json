@@ -187,7 +187,10 @@
     "over": "passa R$ {{amount}}",
     "under": "falta R$ {{amount}}",
     "itemCount": "{{count}} itens",
-    "itemCount_one": "{{count}} item"
+    "itemCount_one": "{{count}} item",
+    "complete": "Completar",
+    "completeLabel": "Completar com fracionado",
+    "noFraction": "Nenhum produto fracionado cobre essa diferença."
   },
   "fractioning": {
     "title": "Fracionamento",
@@ -209,6 +212,14 @@
     "duplicate": "\"{{value}}\" já está na lista.",
     "restore": "Restaurar padrão",
     "restoreConfirm": "Voltar à lista padrão? As regras deste perfil serão substituídas.",
-    "restored": "Lista padrão restaurada."
+    "restored": "Lista padrão restaurada.",
+    "cutoff": "Faixa de preferência de fracionamento",
+    "cutoffNone": "Nada fraciona neste estoque.",
+    "cutoffManual": "definido por você",
+    "cutoffHint": "Abaixo desse valor a busca prefere fracionados; acima, prefere inteiros e o fracionado só completa o resto.",
+    "cutoffSet": "Definir faixa de preferência de fracionamento",
+    "cutoffSave": "Definir",
+    "cutoffReset": "Voltar ao automático",
+    "cutoffInvalid": "Valor inválido para a faixa de preferência."
   }
 }
