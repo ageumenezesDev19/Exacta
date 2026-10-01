@@ -1,0 +1,184 @@
+/* Same card, title and add field as the blacklist: both views are lists of rules for the search. */
+.fractioning {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+
+  h2 {
+    margin: 0 0 0.25rem;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+  }
+
+  .fractioning-intro {
+    margin: 0 0 1.5rem;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+
+  .count-badge {
+    font-size: 0.85em;
+    font-weight: normal;
+    color: var(--ink-soft);
+  }
+}
+
+/* Side by side when there is room: units and names are read together to see what fractions. */
+.rule-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.rule-section {
+  min-width: 0;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    color: var(--font-color);
+  }
+
+  .rule-hint {
+    margin: 0 0 0.75rem;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+  }
+
+  .empty-hint {
+    margin: 1rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+}
+
+.add-rule {
+  display: flex;
+  gap: 0.75rem;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 0 1rem;
+    font-size: 1rem;
+    background: var(--input-bg);
+    color: var(--font-color);
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus { border-color: var(--accent); }
+  }
+
+  button {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover { background: var(--primary-color-hover); }
+  }
+}
+
+.rule-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding-left: 0.875rem;
+    border-bottom: 1px solid var(--line);
+
+    &:last-child { border-bottom: none; }
+  }
+
+  /* A switched-off rule stays readable: it is still there to be switched back on. */
+  li.is-off .rule-text { opacity: 0.55; }
+
+  .rule-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    transition: opacity 0.2s;
+  }
+
+  .rule-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .rule-count {
+    flex-shrink: 0;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Quiet until approached, like the blacklist's remove button. */
+.remove-rule {
+  flex-shrink: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--miss);
+    background: color-mix(in srgb, var(--miss) 10%, transparent);
+  }
+}
+
+/* Left-aligned: the floating clear-data button sits over the bottom-right corner. */
+.fractioning-footer {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1.5rem;
+
+  .restore-btn {
+    min-height: 40px;
+    padding: 0 1rem;
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover { color: var(--font-color); border-color: var(--ink-soft); }
+  }
+}

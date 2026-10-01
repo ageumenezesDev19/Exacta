@@ -9,7 +9,8 @@
     "clearAllData": "Limpar todos os dados",
     "cancelSearch": "Cancelar Busca",
     "madeBy": "Feito por Ageu M. Costa",
-    "ranking": "Ranking"
+    "ranking": "Ranking",
+    "fractioning": "Fracionamento"
   },
   "migration": {
     "prompt": "Este perfil ('{{name}}') possui dados em um formato antigo (Português). Você deseja migrar para o padrão atual (Inglês)?",
@@ -187,5 +188,27 @@
     "under": "falta R$ {{amount}}",
     "itemCount": "{{count}} itens",
     "itemCount_one": "{{count}} item"
+  },
+  "fractioning": {
+    "title": "Fracionamento",
+    "intro": "Produtos que podem sair em frações, como 0,048 KG. Os demais saem só em unidades inteiras.",
+    "byUnit": "Por unidade",
+    "byUnitHint": "A unidade precisa ser igual: KG não inclui KGS.",
+    "unitPlaceholder": "Ex.: KG",
+    "unitEmpty": "Nenhuma unidade. Só os nomes decidem o que fraciona.",
+    "byName": "Por nome",
+    "byNameHint": "Palavra inteira no nome do produto: Tela inclui TELA MOSQUITEIRO, mas não CASTELA.",
+    "namePlaceholder": "Ex.: Tela",
+    "nameEmpty": "Nenhum nome ainda. Use para produtos cuja unidade não diz que fracionam.",
+    "add": "Adicionar",
+    "remove": "Remover",
+    "toggle": "Fracionar {{value}}",
+    "matchesNone": "nenhum produto",
+    "matches": "{{count}} produtos",
+    "matches_one": "{{count}} produto",
+    "duplicate": "\"{{value}}\" já está na lista.",
+    "restore": "Restaurar padrão",
+    "restoreConfirm": "Voltar à lista padrão? As regras deste perfil serão substituídas.",
+    "restored": "Lista padrão restaurada."
   }
 }

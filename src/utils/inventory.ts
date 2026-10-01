@@ -16,6 +16,8 @@ export interface Product {
   csosn?: string;
   st?: string;
   elo?: string;
+  /** Set by each search from the profile's fractioning rules; not part of the imported stock. */
+  fractional?: boolean;
 }
 
 export interface FlaggedProduct {

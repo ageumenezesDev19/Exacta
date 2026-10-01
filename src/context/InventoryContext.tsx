@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useMemo, useState, ReactNode } from "react";
 import { Product, FlaggedProduct, ProfileSettings, roundToThousandth } from "../utils/inventory";
 import { Withdrawn } from "../components/WithdrawnTable";
 import { useNotification } from "../hooks/useNotification";
@@ -11,6 +11,7 @@ import { formatDateForDB } from "../utils/date";
 import { ImportMode } from "../components/FileUpload";
 import { useTranslation } from "react-i18next";
 import { recordWithdrawnCombination } from "../utils/combinationLearning";
+import { FractionRule, defaultRules } from "../utils/fractioning";
 
 export interface ProductWithQuantity extends Product {
   usedQuantity: number;
@@ -22,6 +23,8 @@ interface InventoryContextType {
   withdrawn: Withdrawn[];
   blacklist: string[];
   flaggedProducts: FlaggedProduct[];
+  fractionRules: FractionRule[];
+  fractionRulesAreDefault: boolean;
   activeProfile: string;
   activeProfileSettings: ProfileSettings;
   loading: boolean;
@@ -41,6 +44,8 @@ interface InventoryContextType {
   setWithdrawn: React.Dispatch<React.SetStateAction<Withdrawn[]>>;
   setBlacklist: React.Dispatch<React.SetStateAction<string[]>>;
   setFlaggedProducts: React.Dispatch<React.SetStateAction<FlaggedProduct[]>>;
+  /** null restores the defaults. */
+  setFractionRules: (rules: FractionRule[] | null) => void;
   setLoading: (loading: boolean) => void;
   setView: (view: any) => void;
   setSearchResult: (result: any) => void;
@@ -86,7 +91,11 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [focusSearchInput, setFocusSearchInput] = useState<boolean>(true);
 
   const { notification, showNotification } = useNotification();
-  const { products, setProducts, withdrawn, setWithdrawn, blacklist, setBlacklist, flaggedProducts, setFlaggedProducts } = useInventory();
+  const { products, setProducts, withdrawn, setWithdrawn, blacklist, setBlacklist, flaggedProducts, setFlaggedProducts, storedFractionRules, setStoredFractionRules } = useInventory();
+  const fractionRules = useMemo(
+    () => storedFractionRules ?? defaultRules(products),
+    [storedFractionRules, products]
+  );
   const { activeProfile, activeProfileSettings, updateActiveProfileSettings } = useProfiles();
   const { view, setView } = useViewManager("inventory");
 
@@ -123,6 +132,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     showNotification,
     activeProfileSettings,
     activeProfile,
+    fractionRules,
   });
 
   const handleWithdraw = (productToWithdraw: Product, quantity: number = 1) => {
@@ -237,7 +247,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     setProducts(prevProducts => {
       const exists = prevProducts.some(p => p.code === product.code);
       if (exists) return prevProducts;
-      const { usedQuantity, Difference, ...cleanProduct } = product as any;
+      const { usedQuantity, Difference, fractional, ...cleanProduct } = product as any;
       return [...prevProducts, cleanProduct as Product];
     });
   };
@@ -286,6 +296,8 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     withdrawn,
     blacklist,
     flaggedProducts,
+    fractionRules,
+    fractionRulesAreDefault: storedFractionRules === null,
     activeProfile,
     activeProfileSettings,
     loading,
@@ -301,6 +313,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     setWithdrawn,
     setBlacklist,
     setFlaggedProducts,
+    setFractionRules: setStoredFractionRules,
     setLoading,
     setView,
     setSearchResult,

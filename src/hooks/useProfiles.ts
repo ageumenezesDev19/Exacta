@@ -6,7 +6,7 @@ import { ProfileSettings } from '../utils/inventory';
 const PROFILES_KEY = 'user_profiles';
 const ACTIVE_PROFILE_KEY = 'active_user_profile';
 const DEFAULT_PROFILE = 'Default';
-const PROFILE_DATA_KEYS = ['products', 'withdrawn', 'blacklist', 'flagged', 'settings'];
+const PROFILE_DATA_KEYS = ['products', 'withdrawn', 'blacklist', 'flagged', 'settings', 'fractioning'];
 const DEFAULT_PROFILE_SETTINGS: ProfileSettings = { flagFunctionEnabled: false, singleProductResultEnabled: false };
 
 const getProfileSettings = (profileName: string): ProfileSettings => {

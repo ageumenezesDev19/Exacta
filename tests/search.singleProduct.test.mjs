@@ -35,7 +35,7 @@ test('findSingleProductResult prefers an exact fractional total over a nearby un
   const { findSingleProductResult } = await loadSearchModule();
 
   const result = findSingleProductResult([
-    { ...baseProduct, code: 'A', description: 'Arroz KG', unitOut: 'KG', salePrice: 7.5, quantity: 5 },
+    { ...baseProduct, code: 'A', description: 'Arroz KG', unitOut: 'KG', fractional: true, salePrice: 7.5, quantity: 5 },
     { ...baseProduct, code: 'B', description: 'Biscoito', unitOut: 'UND', salePrice: 14.9, quantity: 10 },
   ], 15, {});
 

@@ -270,7 +270,7 @@ const SearchBar: React.FC = () => {
                   </span>
                   <div className="item-details">
                     <span className="item-quantity">
-                      {t('search.withdrawQuantity', 'Retirar')}: {quantity(p.usedQuantity, (p.unitOut === 'KG' || p.unitOut === 'SC') ? 3 : 0)} {p.unitOut || p.unit}
+                      {t('search.withdrawQuantity', 'Retirar')}: {quantity(p.usedQuantity, p.fractional ? 3 : 0)} {p.unitOut || p.unit}
                       <span style={{ fontSize: '0.9em', color: 'var(--ink-soft)', marginLeft: '8px' }}>
                         ({t('app.inventory', 'Estoque')}: {quantity(Number(p.quantity))})
                       </span>

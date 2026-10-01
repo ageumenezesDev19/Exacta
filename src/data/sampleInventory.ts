@@ -35,4 +35,9 @@ export const sampleProducts: Product[] = [
   { code: '5001', barcode: '7891000500019', description: 'Pilha alcalina AA — 4 un', unit: 'PC', unitOut: 'PC', supplier: 'Eletro Ponto', quantity: 25, costPrice: 11.3, profitMargin: 42, salePrice: 16.0 },
   { code: '5002', barcode: '7891000500026', description: 'Lâmpada LED 9W', unit: 'UN', unitOut: 'UN', supplier: 'Eletro Ponto', quantity: 37, costPrice: 8.7, profitMargin: 38, salePrice: 12.0 },
   { code: '5003', barcode: '7891000500033', description: 'Fita isolante — 20m', unit: 'UN', unitOut: 'UN', supplier: 'Eletro Ponto', quantity: 43, costPrice: 5.2, profitMargin: 44, salePrice: 7.5 },
+  // Sold loose, so fractioning has something to show: two by unit (KG), and one by
+  // metre that only fractions once a name rule such as "Tela" is added.
+  { code: '6001', barcode: '7891000600016', description: 'Queijo muçarela', unit: 'KG', unitOut: 'KG', supplier: 'Laticínios Vale Verde', quantity: 8.35, costPrice: 31.8, profitMargin: 35, salePrice: 42.9 },
+  { code: '6002', barcode: '7891000600023', description: 'Ração para cães adultos a granel', unit: 'KG', unitOut: 'KG', supplier: 'Agro Campo Limpo', quantity: 60, costPrice: 9.2, profitMargin: 36, salePrice: 12.5 },
+  { code: '6003', barcode: '7891000600030', description: 'Tela mosquiteiro — 1,5m de largura', unit: 'M', unitOut: 'M', supplier: 'Eletro Ponto', quantity: 50, costPrice: 6.1, profitMargin: 46, salePrice: 8.9 },
 ];
