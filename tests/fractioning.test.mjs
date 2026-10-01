@@ -79,3 +79,40 @@ test('the default rules list each unit once', async () => {
   assert.equal(new Set(values).size, values.length);
   assert.ok(values.includes('KGS'));
 });
+
+const priced = (salePrice, extra = {}) => ({ unitOut: 'KG', description: 'Produto', salePrice, quantity: 10, fractional: true, ...extra });
+
+test('the automatic cutoff is the median price of one unit of a fractional product', async () => {
+  const { automaticCutoff } = await loadFractioningModule();
+
+  assert.equal(automaticCutoff([priced(2), priced(18), priced(40)]), 18);
+  assert.equal(automaticCutoff([priced(2), priced(18), priced(19), priced(40)]), 18.5);
+});
+
+// A run of whole items at one price (35 seeds at R$ 5,12 in a real stock) dragged a
+// whole-item median down until almost every value counted as high.
+test('the automatic cutoff ignores whole, unpriced and out-of-stock products', async () => {
+  const { automaticCutoff } = await loadFractioningModule();
+
+  assert.equal(automaticCutoff([
+    priced(18),
+    ...Array.from({ length: 35 }, () => priced(5.12, { fractional: false })),
+    priced(0),
+    priced(90, { quantity: 0 }),
+  ]), 18);
+});
+
+test('with no fractional products there is no cutoff, and every value is low', async () => {
+  const { automaticCutoff, valueBand } = await loadFractioningModule();
+
+  assert.equal(automaticCutoff([priced(9, { fractional: false })]), null);
+  assert.equal(valueBand(1000, null), 'low');
+});
+
+test('values below the cutoff are low, from the cutoff up they are high', async () => {
+  const { valueBand } = await loadFractioningModule();
+
+  assert.equal(valueBand(5.99, 6), 'low');
+  assert.equal(valueBand(6, 6), 'high');
+  assert.equal(valueBand(100, 6), 'high');
+});

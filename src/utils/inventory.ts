@@ -31,6 +31,7 @@ export interface ProfileSettings {
   quantityLimit?: number; // undefined = sem limite
   filterByCsosn?: boolean; // true = só importa produtos com CSOSN 500
   singleProductResultEnabled?: boolean; // true = retorna apenas um produto por valor
+  fractionCutoff?: number; // undefined = calculado do estoque
 }
 
 /** The smallest fraction the register takes; stock kept finer than this drifts on every withdrawal. */

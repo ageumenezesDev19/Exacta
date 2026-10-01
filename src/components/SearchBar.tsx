@@ -32,7 +32,10 @@ const SearchBar: React.FC = () => {
     setFocusSearchInput: setFocusInput,
     handleDeleteProduct,
     handleRestoreProduct,
-    showNotification
+    showNotification,
+    completeWithFraction,
+    hasFractionalStock,
+    activeProfileSettings,
   } = useInventoryContext();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +44,13 @@ const SearchBar: React.FC = () => {
   const COMB_ITEMS_PER_PAGE = 4;
 
   const [deletedCombinationItems, setDeletedCombinationItems] = React.useState<Set<string>>(new Set());
+  const comboItems = (result?.combination ?? []).filter((p: any) => !deletedCombinationItems.has(p.code));
+  const comboSum = comboItems.reduce((acc: number, p: any) => acc + (p.salePrice ?? 0) * p.usedQuantity, 0);
+  // A single whole-unit result for a high value can fall short on purpose; the operator decides
+  // whether a fraction completes it.
+  const canComplete = activeProfileSettings.singleProductResultEnabled === true &&
+    hasFractionalStock &&
+    (result?.target ?? 0) - comboSum >= 0.01;
   const [undoToasts, setUndoToasts] = React.useState<Array<{ id: string; product: any; timerId: ReturnType<typeof setTimeout> }>>([]);
 
   React.useEffect(() => {
@@ -245,12 +255,11 @@ const SearchBar: React.FC = () => {
               reading the field again missed "7,5" (NaN) and followed later edits. */}
           <MatchPanel
             target={result.target ?? 0}
-            sum={result.combination
-              .filter((p: any) => !deletedCombinationItems.has(p.code))
-              .reduce((acc: number, p: any) => acc + (p.salePrice ?? 0) * p.usedQuantity, 0)}
-            itemCount={
-              result.combination.filter((p: any) => !deletedCombinationItems.has(p.code)).length
-            }
+            sum={comboSum}
+            itemCount={comboItems.length}
+            onComplete={canComplete
+              ? () => completeWithFraction((result.target ?? 0) - comboSum, Array.from(deletedCombinationItems))
+              : undefined}
           />
 
           <ul className="result-list">

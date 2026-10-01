@@ -102,3 +102,26 @@
     font-size: 1.375rem;
   }
 }
+/* Sits beside "falta R$ X": the shortfall and the way to close it read as one line. */
+.match-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  align-self: center;
+  margin-top: 0.75rem;
+  padding: 0 0.75rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+}

@@ -11,7 +11,7 @@ import { formatDateForDB } from "../utils/date";
 import { ImportMode } from "../components/FileUpload";
 import { useTranslation } from "react-i18next";
 import { recordWithdrawnCombination } from "../utils/combinationLearning";
-import { FractionRule, defaultRules } from "../utils/fractioning";
+import { FractionRule, automaticCutoff, compileFractioning, defaultRules } from "../utils/fractioning";
 
 export interface ProductWithQuantity extends Product {
   usedQuantity: number;
@@ -25,6 +25,10 @@ interface InventoryContextType {
   flaggedProducts: FlaggedProduct[];
   fractionRules: FractionRule[];
   fractionRulesAreDefault: boolean;
+  /** Where searched values stop being low; null when nothing in stock fractions. */
+  fractionCutoff: number | null;
+  automaticFractionCutoff: number | null;
+  hasFractionalStock: boolean;
   activeProfile: string;
   activeProfileSettings: ProfileSettings;
   loading: boolean;
@@ -66,6 +70,7 @@ interface InventoryContextType {
   handleClearData: (type: "products" | "withdrawn" | "all") => void;
   handleSearch: (isRecalculation?: boolean) => void;
   handleRecalculate: () => void;
+  completeWithFraction: (missing: number, excludedCodes: string[]) => void;
   handleCancelSearch: () => void;
   handleFlagProduct: (product: Product) => void;
   handleUnflagProduct: (code: string) => void;
@@ -99,6 +104,20 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
   const { activeProfile, activeProfileSettings, updateActiveProfileSettings } = useProfiles();
   const { view, setView } = useViewManager("inventory");
 
+  // Measured once over what a search could use, so the tab and every search read the same number.
+  const isFractional = useMemo(() => compileFractioning(fractionRules), [fractionRules]);
+  const searchableStock = useMemo(() => {
+    const flaggedCodes = new Set(flaggedProducts.map(f => f.code));
+    const terms = blacklist.map(term => term.toLowerCase());
+    return products
+      .filter(p => p.quantity >= 0.001 && !flaggedCodes.has(p.code))
+      .filter(p => !terms.some(term => p.description.toLowerCase().includes(term) || p.code.toLowerCase().includes(term)))
+      .map(p => ({ ...p, fractional: isFractional(p) }));
+  }, [products, flaggedProducts, blacklist, isFractional]);
+  const automaticFractionCutoff = useMemo(() => automaticCutoff(searchableStock), [searchableStock]);
+  const fractionCutoff = activeProfileSettings.fractionCutoff ?? automaticFractionCutoff;
+  const hasFractionalStock = useMemo(() => searchableStock.some(p => p.fractional), [searchableStock]);
+
   const {
     handleLoadProducts: _handleLoadProducts, handleLoadWithdrawn, handleLoadBlacklist, handleDownload
   } = useFileHandlers({
@@ -122,7 +141,8 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     showCancel,
     handleCancelSearch,
     handleRecalculate,
-    handleSearch
+    handleSearch,
+    completeWithFraction
   } = useSearch({
     products,
     blacklist,
@@ -133,6 +153,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     activeProfileSettings,
     activeProfile,
     fractionRules,
+    fractionCutoff,
   });
 
   const handleWithdraw = (productToWithdraw: Product, quantity: number = 1) => {
@@ -298,6 +319,9 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     flaggedProducts,
     fractionRules,
     fractionRulesAreDefault: storedFractionRules === null,
+    fractionCutoff,
+    automaticFractionCutoff,
+    hasFractionalStock,
     activeProfile,
     activeProfileSettings,
     loading,
@@ -332,6 +356,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     handleClearData,
     handleSearch,
     handleRecalculate,
+    completeWithFraction,
     handleCancelSearch,
     handleFlagProduct,
     handleUnflagProduct,

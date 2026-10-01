@@ -77,3 +77,55 @@ test('findSingleProductResult respects unit quantities and quantityLimit', async
   assert.equal(result?.total, 12);
   assert.equal(result?.differenceCents, 800);
 });
+
+const whole = (code, salePrice, extra = {}) => ({ ...baseProduct, code, description: `Inteiro ${code}`, unitOut: 'UN', salePrice, quantity: 100, ...extra });
+const loose = (code, salePrice, extra = {}) => ({ ...baseProduct, code, description: `Granel ${code}`, unitOut: 'KG', fractional: true, salePrice, quantity: 100, ...extra });
+
+test('a high value prefers a whole product that closes it over a fractional one', async () => {
+  const { findSingleProductResult } = await loadSearchModule();
+
+  const result = findSingleProductResult([loose('Q', 42.9), whole('S', 2)], 100, { cutoff: 6 });
+
+  assert.equal(result?.code, 'S');
+  assert.equal(result?.usedQuantity, 50);
+  assert.equal(result?.differenceCents, 0);
+});
+
+test('a high value with no exact whole product falls short with the nearest whole product, never a large fraction', async () => {
+  const { findSingleProductResult } = await loadSearchModule();
+
+  const result = findSingleProductResult([loose('Q', 42.9), whole('A', 24.9), whole('B', 30)], 100, { cutoff: 6 });
+
+  assert.equal(result?.code, 'A');
+  assert.equal(result?.usedQuantity, 4);
+  assert.equal(result?.total, 99.6);
+});
+
+test('a high value with nothing whole below it still returns a result', async () => {
+  const { findSingleProductResult } = await loadSearchModule();
+
+  const result = findSingleProductResult([loose('Q', 42.9), whole('B', 300)], 100, { cutoff: 6 });
+
+  assert.ok(result);
+});
+
+test('a low value prefers a fractional product over a whole one that closes it too', async () => {
+  const { findSingleProductResult } = await loadSearchModule();
+
+  const result = findSingleProductResult([whole('U', 4), loose('Q', 40)], 4, { cutoff: 6 });
+
+  assert.equal(result?.code, 'Q');
+  assert.equal(result?.differenceCents, 0);
+});
+
+test('within the preferred kind the learned ranking still breaks ties', async () => {
+  const { findSingleProductResult } = await loadSearchModule();
+
+  const result = findSingleProductResult([
+    whole('A', 10, { preferenceScore: 0 }),
+    whole('B', 10, { preferenceScore: 5 }),
+    loose('Q', 42.9),
+  ], 50, { cutoff: 6 });
+
+  assert.equal(result?.code, 'B');
+});

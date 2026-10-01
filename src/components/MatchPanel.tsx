@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Check, AlertTriangle } from "lucide-react";
+import { Check, AlertTriangle, Plus } from "lucide-react";
 import "../styles/MatchPanel.scss";
 import { money } from "../utils/money";
 
@@ -10,6 +10,8 @@ interface MatchPanelProps {
   /** Sum of the items that will actually be withdrawn. */
   sum: number;
   itemCount: number;
+  /** Offered when the sum falls short and a fractional product could cover the rest. */
+  onComplete?: () => void;
 }
 
 /** Anything under half a cent is the same number for a cash register. */
@@ -21,7 +23,7 @@ const CENT = 0.005;
  * sign between. A miss is an answer too — it shows how far off it lands
  * instead of leaving the operator to do the subtraction.
  */
-export const MatchPanel: React.FC<MatchPanelProps> = ({ target, sum, itemCount }) => {
+export const MatchPanel: React.FC<MatchPanelProps> = ({ target, sum, itemCount, onComplete }) => {
   const { t } = useTranslation();
   const difference = sum - target;
   const isExact = Math.abs(difference) < CENT;
@@ -58,6 +60,19 @@ export const MatchPanel: React.FC<MatchPanelProps> = ({ target, sum, itemCount }
             </>
           )}
         </p>
+
+        {!isExact && difference < 0 && onComplete && (
+          <button
+            type="button"
+            className="match-complete"
+            onClick={onComplete}
+            title={t("match.completeLabel", "Completar com fracionado")}
+            aria-label={t("match.completeLabel", "Completar com fracionado")}
+          >
+            <Plus size={14} aria-hidden="true" />
+            {t("match.complete", "Completar")}
+          </button>
+        )}
       </div>
 
       <p className="match-count">
